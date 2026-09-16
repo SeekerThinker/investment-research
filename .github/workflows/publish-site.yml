@@ -34,10 +34,11 @@ jobs:
           python-version: "3.12"
       - name: Build free-reading website
         run: python monitor/build_public_site.py --output _site
-      - name: Validate published artifact
+      - name: Validate published artifact and homepage briefs
         shell: bash
         run: |
           test -f _site/content/index.json
+          test -f _site/assets/feed.css
           test ! -e _site/tracking
           test ! -e _site/index
           test ! -e _site/data/news/state.json
@@ -53,7 +54,17 @@ jobs:
           assert all(r['access']=='public' and (site/r['path']).is_file() for r in data['latest'])
           assert len(data['archive'])==sum(len(list(Path('reports',kind).glob('*.md'))) for kind in ('daily','weekly','monthly'))
           assert 'member' not in (site/'assets/app.js').read_text(encoding='utf-8').lower()
-          print('PASS: public full-report archive, no paywall, support gate, site allowlist')
+          feed=data['feed']
+          assert set(feed)=={'daily','market','weekly','monthly','risk'}
+          assert sum(map(len,feed.values()))>0, 'homepage must show actual research briefs'
+          for channel,rows in feed.items():
+              for row in rows:
+                  assert row['title'] and row['period'] and row['source']
+                  assert row['type'] in ('daily','weekly','monthly')
+                  assert row['detail_period'] is None or any(a['type']==row['type'] and a['period']==row['detail_period'] for a in data['archive'])
+          assert any(feed[k] for k in ('daily','weekly','monthly'))
+          assert '#home/' in (site/'assets/app.js').read_text(encoding='utf-8')
+          print('PASS: content-rich homepage, dated source briefs, free archive and publish allowlist')
           PY
       - name: Configure GitHub Pages
         uses: actions/configure-pages@v6
