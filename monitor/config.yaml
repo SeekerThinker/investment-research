@@ -46,12 +46,13 @@ source_tiers:
 
 blocked_domains: []
 
-# GDELT is optional broad discovery. One query rotates per run; with a 3h lookback
-# this covers all five query families without hammering the public endpoint.
+# GDELT is optional broad discovery. One query rotates per run. The workflow runs
+# every two hours; a 12h lookback lets each five-family rotation overlap enough to
+# avoid large overnight/theme gaps without hammering the public endpoint.
 gdelt:
   enabled: true
   endpoint: https://api.gdeltproject.org/api/v2/doc/doc
-  timespan: 3h
+  timespan: 12h
   maxrecords: 50
   max_queries_per_run: 1
   rotation_seconds: 1800
