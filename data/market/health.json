@@ -1,7 +1,7 @@
 {
   "status": "ok",
   "operational": true,
-  "checked_at": "2026-09-11T12:54:18Z",
+  "checked_at": "2026-09-16T03:39:27Z",
   "provider_policy": {
     "A_primary": "BaoStock",
     "HK_primary": "AKShare/Eastmoney",
@@ -12,7 +12,11 @@
   },
   "provider_health": {
     "baostock": {
-      "success": 9,
+      "success": 10,
+      "fallbacks": 0
+    },
+    "akshare_eastmoney": {
+      "success": 1,
       "fallbacks": 0
     },
     "akshare_sina": {
@@ -20,7 +24,7 @@
       "fallbacks": 2
     }
   },
-  "success": 11,
+  "success": 13,
   "failed": 0,
   "errors": []
 }
