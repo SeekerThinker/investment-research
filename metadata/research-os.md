@@ -182,8 +182,62 @@ Market Phase 描述价格行为与信息扩散阶段，不等于买卖信号。�
 - `reports/`：不可变历史研究记录。
 - `latest/` 与 `dashboard/`：最新阅读层。
 
-机器 NEWS score、phase_hint、gap_hint、crowding_hint 都只是筛选工具，不是投资结论。
+机器 NEWS score、phase_hint、gap_hint、crowding_hint、distribution_risk_hint 都只是筛选工具，不是投资结论。
 
 ## 17. 评分与交易边界
 
 多维评分只作为诊断，不作为机械交易信号。严重风险红线优先于总分；不因热门主题、高涨幅或单一催化自动提高评级。仓位、买卖节奏和组合优化只有在用户明确要求时才进入组合层分析，并且不得把 M阶段或PF Gap直接映射成机械买卖指令。
+
+## 18. Research Writing Quality Gate
+
+日报、周报、月报中的重点研究机会在定稿前，应尽量通过以下六问质量门槛：
+
+1. **What changed?** 新增事实、市场行为或领先指标到底发生了什么变化？标明时间、F/I/S/R与来源层级。
+2. **Why does it matter?** 变化是否足以改变需求、供给、ASP/Mix、份额、产能/良率、利润率、CAPEX、营运资本、CFO/FCF、风险概率或估值框架？
+3. **What is the transmission mechanism?** 尽量写清 `Industry mechanism → Company exposure → Revenue → Gross Margin/Expenses → Profit → CFO/FCF`，避免从行业景气直接跳到公司利润结论。
+4. **What does the market appear to price in?** 结合正式M阶段、PF Gap、crowding、distribution_risk、相对强弱、成交和阶段高点距离说明已定价程度；证据不足时写 `未判定`。
+5. **What evidence would confirm it?** 指定下一层一手验证、Leading Indicator、公司公告、订单、经营或财务确认。
+6. **What evidence would falsify it?** 给出可观察、尽量可量化且有时间窗口的证伪条件。
+
+如果关键机会无法回答第1、5、6项，不应为了报告数量强行升级为正式高优先级研究机会；应保留在 discovery / 待验证层。
+
+## 19. Repository Integrity Audit
+
+GitHub 仓库是项目 canonical state。研究工作流遵循：
+
+`READ → VERIFY STATE → RESEARCH → VERIFY → ANALYZE → UPDATE STATE → WRITE REPORT → UPDATE TRACKERS → COMMIT`
+
+每次结构化写入前至少进行轻量一致性检查：
+
+- 目标仓库存在、`visibility=private` 且当前连接具备 write/push 权限；任一条件不满足立即停止写入，不得改写到其他仓库。
+- 对应日期/周次/月度的不可变报告是否已经存在；已存在时不得覆盖。
+- 新 EVT / THM / HYP / CAT / MBH / LID / AUD ID 必须从仓库当前实际最大编号继续，检查重复 ID。
+- `index/securities.md` 的正式 `market_phase / price_fundamental_gap / crowding / distribution_risk` 与 `tracking/market-behavior.md` 当前记录保持一致。
+- `latest/` 指向的报告日期/周次/月度与实际最新不可变报告一致。
+- 数据健康和 freshness 必须可见；陈旧或 degraded 的 machine data 不得伪装成当前数据。
+
+周报与月报执行前应进行更完整的 Repository Integrity Audit，额外检查：
+
+- 结构化文件中的 EVT / THM / HYP / CAT / MBH / LID / AUD 交叉引用是否存在断链或引用不存在的 ID。
+- 是否存在重复 ID、缺失 tracker、孤立但仍被活跃研究引用的记录。
+- `latest/`、当前 trackers/index 与最近不可变报告之间是否出现未解释的状态漂移。
+- 已 `证伪 / 结束 / 兑现` 的历史记录是否被错误删除或重新编号。
+- machine market/news 数据与 health 的截止时间是否足以支持当前周期判断。
+
+发现一致性问题时，不得修改历史不可变报告来“修正过去”；应在当前周期报告中说明问题，并通过合法的 tracker/index/latest 更新修复当前状态。无法确定正确状态时标记 `待验证`，不得静默猜测。
+
+## 20. Monthly Research Process Audit
+
+每月除研究结果复盘外，必须审计研究过程本身，重点回答：
+
+- 是否过度依赖 NEWS / 媒体发现层，而没有回到 Verification / Confirmation？
+- 是否因为 Narrative / Attention 升温而提前升级 V、M、PF 或盈利判断？
+- 是否忽视价格、相对强弱、成交或利好钝化等 Market Behavior 反证？
+- 是否把 Industry Beta 错当成 Company Alpha，或缺少公司暴露与收入桥？
+- 是否从 Revenue 直接跳到利润，遗漏 Margin、费用、CAPEX、Working Capital、CFO/FCF？
+- 是否在高 crowding 状态下低估 Distribution Risk，尤其忽视相对强弱恶化、距离高点扩大与利好不涨？
+- 是否把 I/S/R 不当地升级为 F，或在证据不足时过早给出正式 V/M/PF 状态？
+- 哪些 Leading Indicator / Catalyst 出现 false positive、miss 或验证延迟？原因是指标设计、数据质量、时间窗口还是传导机制错误？
+- 哪些 Model Audit 缺口长期没有收敛，却仍被反复列入高优先级研究？
+
+月度流程审计应输出：本月有效的研究纪律、重复出现的失败模式、需要在下月调整的验证规则/指标设计，以及仍无法判断的问题。任何命中率、转化率、误报率或其他统计都只能基于仓库中可审计的历史记录计算；样本不足时明确写 `启动期回溯 / 样本不足`，不得制造统计显著性。
