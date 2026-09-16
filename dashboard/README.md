@@ -2,7 +2,7 @@
 
 > 私有投资研究工作台。系统不再以新闻作为唯一入口，而是并行观察市场行为、产业领先指标、叙事扩散与正式验证。机器信号只用于发现，不构成投资结论。
 
-**工作台自动刷新时间（UTC）：** `2026-09-16T19:36:42Z`
+**工作台自动刷新时间（UTC）：** `2026-09-16T23:01:45Z`
 
 ## 快速入口
 
@@ -31,10 +31,10 @@
 | 新闻层 | 状态 |
 |---|---|
 | 运行状态 | **degraded** / operational=True |
-| 最近检查 | `2026-09-16T19:36:41Z` |
+| 最近检查 | `2026-09-16T23:01:44Z` |
 | 来源健康 | 7 正常 / 1 失败 / Tier-1正常 7 |
 | 最近抓取 | 135 条输入 / 0 条研究候选 |
-| 降级来源 | gdelt:china_policy_macro |
+| 降级来源 | gdelt:energy_materials |
 
 ### 市场行为机器层
 
@@ -117,10 +117,10 @@
 
 ## 最新新闻监控
 
-- Collected at: `2026-09-16T19:36:41Z`
+- Collected at: `2026-09-16T23:01:44Z`
 - Source checks: **7 ok / 1 failed**
 - Items fetched: **135**
-- Newly seen: **2**
+- Newly seen: **0**
 - Research candidates: **0**
 
 > Machine-ranked discovery queue only. Candidates are not investment conclusions; verify primary sources before research use.

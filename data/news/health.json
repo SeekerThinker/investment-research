@@ -1,9 +1,9 @@
 {
   "status": "degraded",
   "operational": true,
-  "checked_at": "2026-09-16T19:36:41Z",
+  "checked_at": "2026-09-16T23:01:44Z",
   "items_fetched": 135,
-  "newly_seen": 2,
+  "newly_seen": 0,
   "candidates": 0,
   "sources_ok": 7,
   "sources_failed": 1,
@@ -77,12 +77,12 @@
       "role": "primary_global_macro"
     },
     {
-      "source": "gdelt:china_policy_macro",
+      "source": "gdelt:energy_materials",
       "status": "error",
       "items": 0,
       "tier": 3,
       "role": "broad_discovery",
-      "error": "HTTP 429: 429 Client Error: Too Many Requests for url: https://api.gdeltproject.org/api/v2/doc/doc?query=%28China+OR+Chinese+OR+Beijing+OR+%22Hong+Kong%22+OR+renminbi+OR+yuan%29+%28policy+OR+economy+OR+regulation+OR+tariff+OR+sanction+OR+inflation+OR"
+      "error": "HTTPSConnectionPool(host='api.gdeltproject.org', port=443): Read timed out. (read timeout=10)"
     }
   ]
 }
