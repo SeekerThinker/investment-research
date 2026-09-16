@@ -1,0 +1,26 @@
+{
+  "status": "ok",
+  "operational": true,
+  "checked_at": "2026-09-11T12:54:18Z",
+  "provider_policy": {
+    "A_primary": "BaoStock",
+    "HK_primary": "AKShare/Eastmoney",
+    "HK_secondary": "AKShare/Sina",
+    "fallback": "Yahoo Finance/yfinance",
+    "cache": "data/market/history/*.csv incremental local cache",
+    "tushare_validator": "optional/not configured; add only with TUSHARE_TOKEN"
+  },
+  "provider_health": {
+    "baostock": {
+      "success": 9,
+      "fallbacks": 0
+    },
+    "akshare_sina": {
+      "success": 2,
+      "fallbacks": 2
+    }
+  },
+  "success": 11,
+  "failed": 0,
+  "errors": []
+}

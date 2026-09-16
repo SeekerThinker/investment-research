@@ -1,0 +1,144 @@
+http:
+  timeout_seconds: 10
+  retries: 1
+  backoff_seconds: 2
+  max_retry_after_seconds: 10
+  retry_statuses: [408, 425, 429, 500, 502, 503, 504]
+
+# Candidate queue threshold. This is discovery ranking, not a return forecast.
+scoring:
+  candidate_threshold: 45
+
+dedup:
+  title_similarity: 0.92
+  state_days: 14
+  max_seen_items: 12000
+
+# Monitor stays operational when optional broad-discovery sources are degraded,
+# provided enough direct primary sources are reachable and parseable.
+health:
+  min_sources_ok: 3
+  min_primary_sources_ok: 2
+
+# Tier 1 = primary/official; Tier 2 = major high-quality media/data;
+# Tier 3 = broad discovery/aggregators; Tier 4 = low-confidence discovery only.
+source_tiers:
+  "1":
+    - federalreserve.gov
+    - ecb.europa.eu
+    - pbc.gov.cn
+    - gov.cn
+    - stats.gov.cn
+    - miit.gov.cn
+    - sse.com.cn
+    - szse.cn
+    - hkex.com.hk
+    - hkexnews.hk
+    - sec.gov
+  "2":
+    - reuters.com
+    - bloomberg.com
+    - ft.com
+    - wsj.com
+    - cnbc.com
+    - nikkei.com
+    - scmp.com
+
+blocked_domains: []
+
+# GDELT is optional broad discovery. One query rotates per run; with a 3h lookback
+# this covers all five query families without hammering the public endpoint.
+gdelt:
+  enabled: true
+  endpoint: https://api.gdeltproject.org/api/v2/doc/doc
+  timespan: 3h
+  maxrecords: 50
+  max_queries_per_run: 1
+  rotation_seconds: 1800
+  min_interval_seconds: 4
+  retries: 0
+  backoff_seconds: 3
+  circuit_break_on_429: true
+  queries:
+    - label: china_policy_macro
+      tier: 3
+      query: '(China OR Chinese OR Beijing OR "Hong Kong" OR renminbi OR yuan) (policy OR economy OR regulation OR tariff OR sanction OR inflation OR GDP OR PMI OR rate)'
+    - label: technology_ai_semis
+      tier: 3
+      query: '(China OR Chinese OR Asia) (semiconductor OR chip OR AI OR server OR datacenter OR HBM OR PCB OR robot)'
+    - label: energy_materials
+      tier: 3
+      query: '(China OR Chinese OR Asia) (oil OR gas OR LNG OR copper OR gold OR lithium OR "rare earth" OR coal OR uranium)'
+    - label: trade_geopolitics
+      tier: 3
+      query: '(China OR Chinese OR Taiwan OR "Hong Kong") (tariff OR sanction OR "export control" OR war OR conflict OR election OR military OR trade)'
+    - label: global_macro_transmission
+      tier: 3
+      query: '(Fed OR ECB OR BOJ OR inflation OR "interest rate" OR dollar OR oil) (Asia OR China OR emerging markets)'
+
+# Official/direct feeds are the monitoring backbone. max_entries bounds feeds that
+# expose large archives or omit parseable publication timestamps.
+rss:
+  - name: NBS Latest Releases
+    url: https://www.stats.gov.cn/sj/zxfb/rss.xml
+    tier: 1
+    role: primary_macro
+    country: CN
+    language: zh
+    max_age_hours: 168
+    max_entries: 60
+    enabled: true
+  - name: NBS Data Interpretation
+    url: https://www.stats.gov.cn/sj/sjjd/rss.xml
+    tier: 1
+    role: primary_macro
+    country: CN
+    language: zh
+    max_age_hours: 168
+    max_entries: 60
+    enabled: true
+  - name: HKEX News Releases
+    url: https://www.hkex.com.hk/Services/RSS-Feeds/News-Releases?sc_lang=en
+    tier: 1
+    role: primary_exchange
+    country: HK
+    language: en
+    max_age_hours: 168
+    max_entries: 50
+    enabled: true
+  - name: HKEX Regulatory Announcements
+    url: https://www.hkex.com.hk/Services/RSS-Feeds/regulatory-announcements?sc_lang=en
+    tier: 1
+    role: primary_exchange
+    country: HK
+    language: en
+    max_age_hours: 168
+    max_entries: 50
+    enabled: true
+  - name: HKEX Market Communications
+    url: https://www.hkex.com.hk/Services/RSS-Feeds/market-communications?sc_lang=en
+    tier: 1
+    role: primary_exchange
+    country: HK
+    language: en
+    max_age_hours: 168
+    max_entries: 50
+    enabled: true
+  - name: Federal Reserve Press Releases
+    url: https://www.federalreserve.gov/feeds/press_all.xml
+    tier: 1
+    role: primary_global_macro
+    country: US
+    language: en
+    max_age_hours: 168
+    max_entries: 50
+    enabled: true
+  - name: ECB Press Releases
+    url: https://www.ecb.europa.eu/rss/press.html
+    tier: 1
+    role: primary_global_macro
+    country: EU
+    language: en
+    max_age_hours: 168
+    max_entries: 50
+    enabled: true

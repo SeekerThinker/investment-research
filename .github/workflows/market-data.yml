@@ -1,0 +1,102 @@
+name: Daily Market Data
+
+on:
+  workflow_dispatch:
+  push:
+    branches:
+      - main
+    paths:
+      - 'monitor/market_providers.py'
+      - 'monitor/market_behavior_v2.py'
+      - 'monitor/requirements.txt'
+      - 'index/securities.md'
+      - '.github/workflows/market-data.yml'
+  schedule:
+    # After both A-share and Hong Kong cash-market close.
+    - cron: '25 16 * * 1-5'
+      timezone: 'Asia/Shanghai'
+
+permissions:
+  contents: write
+
+concurrency:
+  group: daily-market-data
+  cancel-in-progress: true
+
+jobs:
+  collect:
+    runs-on: ubuntu-latest
+    timeout-minutes: 12
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+          cache: pip
+          cache-dependency-path: monitor/requirements.txt
+
+      - name: Install dependencies
+        run: python -m pip install -r monitor/requirements.txt
+
+      - name: Validate market collectors
+        shell: bash
+        run: |
+          set -euo pipefail
+          python -m py_compile monitor/market_providers.py monitor/market_behavior_v2.py monitor/render_dashboard.py monitor/validate_research_os.py
+          python - <<'PY'
+          import akshare, baostock, yfinance
+          print('akshare', getattr(akshare, '__version__', 'unknown'))
+          print('baostock', getattr(baostock, '__version__', 'unknown'))
+          print('yfinance', getattr(yfinance, '__version__', 'unknown'))
+          PY
+          python monitor/validate_research_os.py
+
+      - name: Collect market behavior
+        run: python monitor/market_behavior_v2.py --force
+
+      - name: Render workbench
+        run: python monitor/render_dashboard.py
+
+      - name: Verify market outputs
+        shell: bash
+        run: |
+          set -euo pipefail
+          test -s data/market/latest.json
+          test -s data/market/latest.md
+          test -s data/market/health.json
+          test -d data/market/history
+          test -s dashboard/README.md
+          python - <<'PY'
+          import json
+          from pathlib import Path
+          health = json.loads(Path('data/market/health.json').read_text(encoding='utf-8'))
+          print('market health:', health)
+          if not health.get('operational', False):
+              raise SystemExit(f"market data is not operational: {health}")
+          policy = health.get('provider_policy', {})
+          assert policy.get('A_primary') == 'BaoStock'
+          assert policy.get('HK_primary') == 'AKShare/Eastmoney'
+          assert policy.get('fallback') == 'Yahoo Finance/yfinance'
+          if health.get('status') == 'degraded':
+              print('::warning::Market data operational but degraded; fallback/cache may be in use')
+          PY
+
+      - name: Commit market data and dashboard
+        shell: bash
+        run: |
+          set -euo pipefail
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add data/market dashboard/README.md
+          if git diff --cached --quiet; then
+            echo "No market-data changes to commit."
+            exit 0
+          fi
+          git commit -m "market data: $(date -u +%Y-%m-%dT%H:%MZ)"
+          git pull --rebase origin "${GITHUB_REF_NAME}"
+          git push origin "HEAD:${GITHUB_REF_NAME}"

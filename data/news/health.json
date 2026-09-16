@@ -1,0 +1,88 @@
+{
+  "status": "degraded",
+  "operational": true,
+  "checked_at": "2026-09-12T22:28:19Z",
+  "items_fetched": 132,
+  "newly_seen": 1,
+  "candidates": 0,
+  "sources_ok": 7,
+  "sources_failed": 1,
+  "primary_sources_ok": 7,
+  "health_thresholds": {
+    "min_sources_ok": 3,
+    "min_primary_sources_ok": 2
+  },
+  "sources": [
+    {
+      "source": "rss:NBS Latest Releases",
+      "status": "ok",
+      "items": 60,
+      "scanned_items": 60,
+      "raw_items": 500,
+      "tier": 1,
+      "role": "primary_macro"
+    },
+    {
+      "source": "rss:NBS Data Interpretation",
+      "status": "ok",
+      "items": 60,
+      "scanned_items": 60,
+      "raw_items": 500,
+      "tier": 1,
+      "role": "primary_macro"
+    },
+    {
+      "source": "rss:HKEX News Releases",
+      "status": "ok",
+      "items": 1,
+      "scanned_items": 50,
+      "raw_items": 50,
+      "tier": 1,
+      "role": "primary_exchange"
+    },
+    {
+      "source": "rss:HKEX Regulatory Announcements",
+      "status": "ok",
+      "items": 2,
+      "scanned_items": 50,
+      "raw_items": 50,
+      "tier": 1,
+      "role": "primary_exchange"
+    },
+    {
+      "source": "rss:HKEX Market Communications",
+      "status": "ok",
+      "items": 0,
+      "scanned_items": 50,
+      "raw_items": 50,
+      "tier": 1,
+      "role": "primary_exchange"
+    },
+    {
+      "source": "rss:Federal Reserve Press Releases",
+      "status": "ok",
+      "items": 2,
+      "scanned_items": 20,
+      "raw_items": 20,
+      "tier": 1,
+      "role": "primary_global_macro"
+    },
+    {
+      "source": "rss:ECB Press Releases",
+      "status": "ok",
+      "items": 7,
+      "scanned_items": 15,
+      "raw_items": 15,
+      "tier": 1,
+      "role": "primary_global_macro"
+    },
+    {
+      "source": "gdelt:trade_geopolitics",
+      "status": "error",
+      "items": 0,
+      "tier": 3,
+      "role": "broad_discovery",
+      "error": "HTTP 429: 429 Client Error: Too Many Requests for url: https://api.gdeltproject.org/api/v2/doc/doc?query=%28China+OR+Chinese+OR+Taiwan+OR+%22Hong+Kong%22%29+%28tariff+OR+sanction+OR+%22export+control%22+OR+war+OR+conflict+OR+election+OR+military+OR+t"
+    }
+  ]
+}
