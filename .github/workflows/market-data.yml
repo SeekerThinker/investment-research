@@ -48,6 +48,29 @@ jobs:
           echo "exit_code=$code" >> "$GITHUB_OUTPUT"
           exit 0
 
+      - name: Mark stale-cache fallback as degraded
+        shell: bash
+        run: |
+          python - <<'PY'
+          import json
+          from pathlib import Path
+
+          latest_path = Path("data/market/latest.json")
+          health_path = Path("data/market/health.json")
+          if not latest_path.exists() or not health_path.exists():
+              raise SystemExit(0)
+
+          latest = json.loads(latest_path.read_text(encoding="utf-8"))
+          health = json.loads(health_path.read_text(encoding="utf-8"))
+          stale = [item.get("code") for item in latest.get("items", []) if item.get("provider") == "local_cache_stale"]
+          if stale:
+              health["status"] = "degraded"
+              health["stale_cache_legs"] = stale
+              health["stale_cache_count"] = len(stale)
+              health_path.write_text(json.dumps(health, ensure_ascii=False, indent=2) + "\n", encoding="utf-8")
+              print(f"Marked market health degraded because stale cache was used for: {', '.join(stale)}")
+          PY
+
       - name: Render dashboard
         run: python monitor/render_dashboard.py
 
