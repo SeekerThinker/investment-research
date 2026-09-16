@@ -1,9 +1,9 @@
 # News Monitor — Latest Run
 
-- Collected at: `2026-09-12T22:28:19Z`
+- Collected at: `2026-09-16T03:43:58Z`
 - Source checks: **7 ok / 1 failed**
-- Items fetched: **132**
-- Newly seen: **1**
+- Items fetched: **133**
+- Newly seen: **15**
 - Research candidates: **0**
 
 > Machine-ranked discovery queue only. Candidates are not investment conclusions; verify primary sources before research use.

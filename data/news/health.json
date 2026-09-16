@@ -1,9 +1,9 @@
 {
   "status": "degraded",
   "operational": true,
-  "checked_at": "2026-09-12T22:28:19Z",
-  "items_fetched": 132,
-  "newly_seen": 1,
+  "checked_at": "2026-09-16T03:43:58Z",
+  "items_fetched": 133,
+  "newly_seen": 15,
   "candidates": 0,
   "sources_ok": 7,
   "sources_failed": 1,
@@ -43,7 +43,7 @@
     {
       "source": "rss:HKEX Regulatory Announcements",
       "status": "ok",
-      "items": 2,
+      "items": 1,
       "scanned_items": 50,
       "raw_items": 50,
       "tier": 1,
@@ -70,7 +70,7 @@
     {
       "source": "rss:ECB Press Releases",
       "status": "ok",
-      "items": 7,
+      "items": 9,
       "scanned_items": 15,
       "raw_items": 15,
       "tier": 1,
