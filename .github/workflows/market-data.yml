@@ -2,6 +2,15 @@ name: Daily Market Data
 
 on:
   workflow_dispatch:
+  push:
+    paths:
+      - ".github/workflows/market-data.yml"
+      - "monitor/market_behavior_v2.py"
+      - "monitor/market_providers.py"
+      - "monitor/render_dashboard.py"
+      - "monitor/validate_research_os.py"
+      - "monitor/requirements.txt"
+      - "index/securities.md"
   schedule:
     - cron: "25 16 * * 1-5"
       timezone: "Asia/Shanghai"
