@@ -13,6 +13,7 @@ ALLOWED_CATALYST_TYPE = {"A", "B", "C"}
 ALLOWED_MARKET_PHASE = {"M0", "M1", "M2", "M3", "M4", "M5", "未判定"}
 ALLOWED_PF_GAP = {"PF-2", "PF-1", "PF0", "PF1", "PF2", "PF3", "未判定"}
 ALLOWED_RISK_LEVEL = {"低", "中", "高", "极高", "未判定"}
+ALLOWED_INDICATOR_STATUS = {"待更新", "已触发", "强化", "弱化", "失效", "已被财务确认"}
 
 
 def read(path: str) -> str:
@@ -47,6 +48,15 @@ def require_columns(path: str, columns):
     return rows
 
 
+def require_unique(rows, key: str, label: str) -> None:
+    seen = set()
+    for row in rows:
+        value = row.get(key, "").strip()
+        assert value, f"missing {label} id: {row}"
+        assert value not in seen, f"duplicate {label} id: {value}"
+        seen.add(value)
+
+
 def evidence_ok(value: str) -> bool:
     value = value.replace("+", "/")
     parts = [p.strip() for p in value.split("/") if p.strip()]
@@ -76,7 +86,7 @@ def main() -> int:
     events = require_columns("index/events.md", ["event_id", "来源等级", "证据属性", "兑现阶段", "当前状态"])
     themes = require_columns("index/themes.md", ["theme_id", "evidence_mix", "verification_stage", "research_stage", "当前状态"])
     securities = require_columns("index/securities.md", [
-        "代码", "research_stage", "verification_stage", "market_behavior_id", "market_phase",
+        "代码", "research_stage", "当前研究状态", "verification_stage", "market_behavior_id", "market_phase",
         "price_fundamental_gap", "crowding", "distribution_risk", "industry_beta",
         "company_alpha", "model_audit", "freshness"
     ])
@@ -89,6 +99,15 @@ def main() -> int:
     ])
     audits = require_columns("tracking/model-audit.md", ["audit_id", "标的/主题", "总体结果", "主要缺口/下一步"])
 
+    require_unique(events, "event_id", "event")
+    require_unique(themes, "theme_id", "theme")
+    require_unique(securities, "代码", "security")
+    require_unique(hypotheses, "hypothesis_id", "hypothesis")
+    require_unique(catalysts, "catalyst_id", "catalyst")
+    require_unique(indicators, "indicator_id", "leading-indicator")
+    require_unique(behaviors, "behavior_id", "market-behavior")
+    require_unique(audits, "audit_id", "model-audit")
+
     for row in events:
         assert evidence_ok(row["证据属性"]), f"invalid event evidence: {row}"
         assert verification_ok(row["兑现阶段"]), f"invalid event verification stage: {row}"
@@ -100,9 +119,10 @@ def main() -> int:
         assert row["research_stage"] in ALLOWED_RESEARCH_STAGE, f"invalid theme research stage: {row}"
         assert row["当前状态"] in ALLOWED_STATUS, f"invalid theme status: {row}"
 
-    behavior_ids = {r["behavior_id"] for r in behaviors}
+    behavior_by_id = {r["behavior_id"]: r for r in behaviors}
     for row in securities:
         assert row["research_stage"] in ALLOWED_RESEARCH_STAGE, f"invalid security research stage: {row}"
+        assert row["当前研究状态"] in ALLOWED_STATUS, f"invalid security status: {row}"
         assert verification_ok(row["verification_stage"]), f"invalid security verification stage: {row}"
         assert row["market_phase"] in ALLOWED_MARKET_PHASE, f"invalid market phase: {row}"
         assert row["price_fundamental_gap"] in ALLOWED_PF_GAP, f"invalid PF gap: {row}"
@@ -111,8 +131,16 @@ def main() -> int:
         assert row["industry_beta"], f"missing industry_beta: {row}"
         assert row["company_alpha"], f"missing company_alpha: {row}"
         if row["research_stage"] in {"活跃研究", "待验证"}:
-            assert row["market_behavior_id"] in behavior_ids, f"tracked security without valid market behavior id: {row}"
+            assert row["market_behavior_id"] in behavior_by_id, f"tracked security without valid market behavior id: {row}"
+        if row["market_behavior_id"] in behavior_by_id:
+            behavior = behavior_by_id[row["market_behavior_id"]]
+            for field in ("market_phase", "price_fundamental_gap", "crowding", "distribution_risk"):
+                assert row[field] == behavior[field], (
+                    f"security/market-behavior mismatch for {row['代码']} field={field}: "
+                    f"security={row[field]} behavior={behavior[field]} behavior_id={row['market_behavior_id']}"
+                )
 
+    indicator_ids = {r["indicator_id"] for r in indicators}
     for row in hypotheses:
         assert evidence_ok(row["evidence_type"]), f"invalid hypothesis evidence: {row}"
         assert verification_ok(row["verification_stage"]), f"invalid hypothesis verification stage: {row}"
@@ -120,6 +148,9 @@ def main() -> int:
         assert row["当前状态"] in ALLOWED_STATUS, f"invalid hypothesis status: {row}"
         if row["research_stage"] == "活跃研究":
             assert row["leading_indicator_ids"], f"active hypothesis without leading indicators: {row}"
+            linked = [x.strip() for x in row["leading_indicator_ids"].replace(",", "/").split("/") if x.strip()]
+            missing = [x for x in linked if x.startswith("LID-") and x not in indicator_ids]
+            assert not missing, f"active hypothesis references missing leading indicators {missing}: {row}"
 
     for row in catalysts:
         assert row["catalyst_type"] in ALLOWED_CATALYST_TYPE, f"invalid catalyst type: {row}"
@@ -129,6 +160,7 @@ def main() -> int:
 
     for row in indicators:
         assert evidence_ok(row["证据属性"]), f"invalid leading-indicator evidence: {row}"
+        assert row["当前状态"] in ALLOWED_INDICATOR_STATUS, f"invalid leading-indicator status: {row}"
 
     for row in behaviors:
         assert row["market_phase"] in ALLOWED_MARKET_PHASE, f"invalid behavior market phase: {row}"
