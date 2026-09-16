@@ -128,14 +128,22 @@ def baostock_code(code: str) -> str:
 class BaoStockSession:
     def __init__(self) -> None:
         self.logged_in = False
+        self.login_error: str | None = None
 
     def __enter__(self):
         if bs is None:
-            raise RuntimeError("baostock package unavailable")
-        login = bs.login()
+            self.login_error = "baostock package unavailable"
+            return self
+        try:
+            login = bs.login()
+        except Exception as exc:
+            self.login_error = f"BaoStock login exception: {exc}"
+            return self
         if getattr(login, "error_code", "1") != "0":
-            raise RuntimeError(f"BaoStock login failed: {getattr(login, 'error_msg', 'unknown')}")
+            self.login_error = f"BaoStock login failed: {getattr(login, 'error_msg', 'unknown')}"
+            return self
         self.logged_in = True
+        self.login_error = None
         return self
 
     def __exit__(self, exc_type, exc, tb):
@@ -146,6 +154,8 @@ class BaoStockSession:
                 pass
 
     def fetch(self, code: str, start: datetime, end: datetime) -> pd.DataFrame:
+        if not self.logged_in or bs is None:
+            raise RuntimeError(self.login_error or "BaoStock session unavailable")
         fields = "date,code,open,high,low,close,volume,amount,turn,tradestatus"
         rs = bs.query_history_k_data_plus(
             baostock_code(code), fields,
