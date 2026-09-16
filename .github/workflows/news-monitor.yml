@@ -63,19 +63,47 @@ jobs:
       - name: Validate research database after collection
         run: python monitor/validate_research_os.py
 
-      - name: Commit discovery refresh
+      - name: Sync latest branch and commit discovery refresh
         shell: bash
         run: |
+          set -u
+          snapshot="/tmp/news-refresh-${GITHUB_RUN_ID}"
+          rm -rf "$snapshot"
+          mkdir -p "$snapshot"
+          cp -a data/news/. "$snapshot"/
+
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-          git add data/news dashboard/README.md
-          if git diff --cached --quiet; then
-            echo "No news/discovery changes to commit."
-            exit 0
-          fi
-          git commit -m "machine news discovery: ${GITHUB_RUN_ID}"
-          git pull --rebase origin "${GITHUB_REF_NAME}"
-          git push origin "HEAD:${GITHUB_REF_NAME}"
+
+          for attempt in 1 2 3; do
+            echo "Publishing news refresh, attempt ${attempt}/3"
+            git fetch origin "${GITHUB_REF_NAME}"
+            git reset --hard "origin/${GITHUB_REF_NAME}"
+
+            rm -rf data/news
+            mkdir -p data/news
+            cp -a "$snapshot"/. data/news/
+
+            python monitor/render_dashboard.py
+            python monitor/validate_research_os.py
+
+            git add data/news dashboard/README.md
+            if git diff --cached --quiet; then
+              echo "No news/discovery changes to commit."
+              exit 0
+            fi
+
+            git commit -m "machine news discovery: ${GITHUB_RUN_ID}"
+            if git push origin "HEAD:${GITHUB_REF_NAME}"; then
+              echo "News/discovery refresh published."
+              exit 0
+            fi
+
+            echo "Push raced with another writer; retrying on top of latest ${GITHUB_REF_NAME}."
+          done
+
+          echo "Unable to publish news/discovery refresh after 3 attempts."
+          exit 1
 
       - name: Fail run when primary discovery backbone is down
         if: always() && steps.collector.outputs.exit_code != '0'
