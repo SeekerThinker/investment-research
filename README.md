@@ -1,10 +1,12 @@
 # Investment Research
 
-Private research repository for A-share and Hong Kong Stock Connect investment research.
+Public, auditable A-share and Hong Kong Stock Connect research project. All published reports are free to read; voluntary sponsorship does not change access or research conclusions.
+
+Website: https://seekerthinker.github.io/investment-research/ (free report archive and voluntary support; payment link not yet enabled).
 
 ## Workbench
 
-- Private research workbench: [`dashboard/`](dashboard/)
+- Research workbench: [`dashboard/`](dashboard/)
 - Latest market-behavior snapshot: [`data/market/latest.md`](data/market/latest.md)
 - Latest news monitor summary: [`data/news/latest.md`](data/news/latest.md)
 - Latest daily research: [`latest/daily.md`](latest/daily.md)

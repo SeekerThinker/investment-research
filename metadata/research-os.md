@@ -209,7 +209,7 @@ GitHub 仓库是项目 canonical state。研究工作流遵循：
 
 每次结构化写入前至少进行轻量一致性检查：
 
-- 目标仓库存在、`visibility=private` 且当前连接具备 write/push 权限；任一条件不满足立即停止写入，不得改写到其他仓库。
+- 目标仓库存在、`visibility=public`（项目所有者明确批准的当前状态）且当前连接具备 write/push 权限；任一条件不满足立即停止写入，不得改写到其他仓库。公开仓库不得写入密码、token、个人隐私或无再分发许可的第三方数据。
 - 对应日期/周次/月度的不可变报告是否已经存在；已存在时不得覆盖。
 - 新 EVT / THM / HYP / CAT / MBH / LID / AUD ID 必须从仓库当前实际最大编号继续，检查重复 ID。
 - `index/securities.md` 的正式 `market_phase / price_fundamental_gap / crowding / distribution_risk` 与 `tracking/market-behavior.md` 当前记录保持一致。
