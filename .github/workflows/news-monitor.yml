@@ -2,6 +2,15 @@ name: Market Research Monitor
 
 on:
   workflow_dispatch:
+  push:
+    paths:
+      - ".github/workflows/news-monitor.yml"
+      - "monitor/news_monitor.py"
+      - "monitor/news_monitor_v2.py"
+      - "monitor/config.yaml"
+      - "monitor/render_dashboard.py"
+      - "monitor/validate_research_os.py"
+      - "monitor/requirements.txt"
   schedule:
     - cron: "17 */2 * * *"
       timezone: "Asia/Shanghai"
