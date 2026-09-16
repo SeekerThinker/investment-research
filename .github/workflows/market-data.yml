@@ -1,17 +1,75 @@
 name: Daily Market Data
+
 on:
   workflow_dispatch:
   schedule:
     - cron: "25 16 * * 1-5"
-      timezone: Asia/Shanghai
+      timezone: "Asia/Shanghai"
+
 permissions:
   contents: write
+
+concurrency:
+  group: research-machine-data
+  cancel-in-progress: false
+
 jobs:
-  validate:
+  collect:
     runs-on: ubuntu-latest
+    timeout-minutes: 25
     steps:
-      - uses: actions/checkout@v4
-      - uses: actions/setup-python@v5
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
         with:
           python-version: "3.12"
-      - run: python -m py_compile monitor/market_providers.py monitor/market_behavior_v2.py monitor/render_dashboard.py monitor/validate_research_os.py
+          cache: pip
+          cache-dependency-path: monitor/requirements.txt
+
+      - name: Install dependencies
+        run: python -m pip install --upgrade pip && python -m pip install -r monitor/requirements.txt
+
+      - name: Compile monitor code
+        run: python -m py_compile monitor/market_providers.py monitor/market_behavior_v2.py monitor/render_dashboard.py monitor/validate_research_os.py
+
+      - name: Validate research database before collection
+        run: python monitor/validate_research_os.py
+
+      - name: Collect market data
+        id: collector
+        shell: bash
+        run: |
+          code=0
+          python monitor/market_behavior_v2.py --force || code=$?
+          echo "exit_code=$code" >> "$GITHUB_OUTPUT"
+          exit 0
+
+      - name: Render dashboard
+        run: python monitor/render_dashboard.py
+
+      - name: Validate research database after collection
+        run: python monitor/validate_research_os.py
+
+      - name: Commit machine-data refresh
+        shell: bash
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add data/market dashboard/README.md
+          if git diff --cached --quiet; then
+            echo "No market-data changes to commit."
+            exit 0
+          fi
+          git commit -m "machine market data: ${GITHUB_RUN_ID}"
+          git pull --rebase origin "${GITHUB_REF_NAME}"
+          git push origin "HEAD:${GITHUB_REF_NAME}"
+
+      - name: Fail run when live market collection is down
+        if: always() && steps.collector.outputs.exit_code != '0'
+        run: |
+          echo "Market collector returned exit code ${{ steps.collector.outputs.exit_code }} after persisting available health/data."
+          exit 1
