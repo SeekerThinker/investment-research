@@ -34,7 +34,7 @@ jobs:
           python-version: "3.12"
       - name: Build free-reading website
         run: python monitor/build_public_site.py --output _site
-      - name: Validate published artifact and homepage briefs
+      - name: Validate published artifact, homepage briefs and daylight theme
         shell: bash
         run: |
           test -f _site/content/index.json
@@ -45,6 +45,7 @@ jobs:
           test ! -e _site/data/news/candidates
           python - <<'PY'
           import json
+          import re
           from pathlib import Path
           site=Path('_site')
           data=json.loads((site/'content/index.json').read_text(encoding='utf-8'))
@@ -64,7 +65,19 @@ jobs:
                   assert row['detail_period'] is None or any(a['type']==row['type'] and a['period']==row['detail_period'] for a in data['archive'])
           assert any(feed[k] for k in ('daily','weekly','monthly'))
           assert '#home/' in (site/'assets/app.js').read_text(encoding='utf-8')
-          print('PASS: content-rich homepage, dated source briefs, free archive and publish allowlist')
+          styles=(site/'assets/styles.css').read_text(encoding='utf-8')
+          feed_styles=(site/'assets/feed.css').read_text(encoding='utf-8')
+          html=(site/'index.html').read_text(encoding='utf-8')
+          assert 'color-scheme: light' in styles and 'content="light"' in html
+          assert 'background: #fff;' in styles and 'background: #fff;' in feed_styles
+          assert 'background:linear-gradient' not in styles+feed_styles
+          assert 'linear-gradient(' not in styles+feed_styles
+          assert '#d2daf0' not in feed_styles, 'dark-theme light-colored feed copy detected'
+          assert re.search(r'\.brief-card\s*\{[^}]*background:\s*#fff\s*;',feed_styles,re.S)
+          assert re.search(r'\.brief-card p\s*\{[^}]*color:\s*#36465b\s*;',feed_styles,re.S)
+          assert re.search(r'\.reader pre\s*\{[^}]*background:\s*#fff\s*;',styles,re.S)
+          assert 'assets/feed.css?v=daylight-' in html and 'assets/styles.css?v=daylight-' in html
+          print('PASS: dated research feed, full report archive, white cards/code/tables, no dark gradient, stylesheet cache refresh')
           PY
       - name: Configure GitHub Pages
         uses: actions/configure-pages@v6
