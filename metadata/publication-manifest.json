@@ -1,24 +1,20 @@
 {
-  "version": 1,
+  "version": 2,
   "canonical_repository": "SeekerThinker/investment-research",
+  "publication_model": "open-reading-voluntary-support",
   "public": {
     "latest_summaries": ["daily", "weekly", "monthly"],
     "historical_catalog": true,
-    "historical_full_text": false,
+    "historical_full_text": true,
     "health": "curated-only"
   },
-  "member": {
-    "catalog_visible_publicly": true,
-    "full_text_in_public_artifact": false,
-    "planned": ["full report archive", "theme dossiers", "leading indicator archive", "model audit views", "comparison tools"]
+  "sponsorship": {
+    "enabled": false,
+    "url": null,
+    "access_benefit": false,
+    "note": "Add a verified, owner-approved HTTPS payment URL here to activate a voluntary support link; never invent or infer payment details."
   },
-  "private_never_auto_export": [
-    "tracking/**",
-    "index/**",
-    "data/news/state.json",
-    "data/news/candidates/**",
-    "private notes",
-    "credentials/tokens",
-    "portfolio/positions"
+  "not_copied_into_site": [
+    "tracking/**", "index/**", "data/news/state.json", "data/news/candidates/**", "credentials/tokens"
   ]
 }

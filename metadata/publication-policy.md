@@ -1,107 +1,31 @@
-# Publication Policy
+# Publication Policy — Open Reading and Voluntary Support
 
-This file defines how the private investment-research system may feed a public blog, website, dashboard, or member product without turning the canonical research database itself into a public repository.
+## 1. Repository and site status
 
-## 1. Canonical state remains private
+The project owner has explicitly chosen to make `SeekerThinker/investment-research` a **public GitHub repository**. It remains the one canonical research state. The GitHub Pages site is a generated, disposable reading view of this public project; it is not a separate source of truth. Do not imply that files excluded from the Pages artifact are secret: they remain accessible in the public repository and its Git history. A future change in repository visibility requires the owner's direction and a fresh privacy review.
 
-`SeekerThinker/investment-research` remains the canonical private research engine.
+## 2. Free reading, no membership
 
-Do not change this repository to public as part of normal publishing. Public/member content must be produced as a derived, filtered output into a separate publication layer or separate repository/site.
+All reports that are included in the website are equally readable by everyone, free of charge. Publish the latest daily/weekly/monthly summaries and the existing immutable historical report markdown under `reports/{daily,weekly,monthly}/`. There is no member tier, paywall, early-access tier, privileged research feed, or donation-dependent access. New reports join the website when the normal report-writing workflow commits them; do not backfill missing historical reports or rewrite immutable originals.
 
-The publication layer must never become a second canonical research state. Corrections and state migrations happen in the private research engine first, then flow outward.
+## 3. Voluntary sponsorship
 
-## 2. Three-layer model
+A support page may explain how readers can voluntarily fund independent research. Supporting must not change content access, ranking, timing, coverage, or the substance of research conclusions; it must not buy personalized advice or securities recommendations. Do not manufacture a payment account, QR code, URL, payment amount, sponsor identity, or claim of a completed transaction. The external payment link must remain disabled until the owner explicitly approves a real HTTPS destination in `metadata/publication-manifest.json`. Record and disclose material sponsorship-related conflicts as appropriate; investigate applicable local fundraising/payment, tax, consumer and financial-regulatory requirements before accepting real funds. A disclaimer is not a substitute for applicable compliance.
 
-Preferred architecture:
+## 4. Site export boundary versus repository publicity
 
-`Private Research Engine → Publication Filter → Public / Member Reading Layer`
+`monitor/build_public_site.py` uses an allowlist to produce only the website UI, latest report summaries, historical report markdown, report catalog, and a small health summary. The site deliberately does not copy raw NEWS queues/state, `tracking/**`, `index/**`, debug data, passwords or tokens. This is a *website presentation boundary*, NOT an access restriction on the public repository. Never commit credentials, personal contact details, private positions, or other sensitive content to a public repository, even if omitted from `_site/`. Review source licenses and personal information before committing or republishing data. If confidential material was previously committed, removing it from current files is not enough to revoke past Git history or copies.
 
-### Private Research Engine
+## 5. Research quality and disclosure
 
-Contains the complete internal state, including machine discovery queues, raw candidate history, research-stage transitions, Model Audit gaps, falsification history, source-health diagnostics, and other working material.
+- Separate confirmed facts (F), inference (I), scenario (S) and unverified information (R); R cannot alone underpin high-confidence earnings claims.
+- NEWS discovery is not a verification layer; major claims need primary sources and appropriate independent corroboration.
+- State report publication date and market-data cutoff; historical reports are dated records, not real-time investment views.
+- Distinguish industry exposure from company revenue, margin, profit and CFO/FCF transmission; document Model Audit gaps, Price In and falsification conditions where relevant.
+- Never automatically turn machine hints or formal M/PF/crowding/distribution-risk categories into mechanical BUY/SELL or position-sizing instructions.
+- Preserve corrections and falsification history in subsequent reports or a transparent correction record rather than silently rewriting immutable historical reports.
+- Disclose relevant sponsorship, issuer/holding conflicts, source attribution and limitations as appropriate. Research is for information and education, not personalized advice; actual legal duties depend on the audience, jurisdiction, fees and real activity.
 
-### Public Reading Layer
+## 6. Publication operations
 
-Suitable for a personal research blog/dashboard. Prefer:
-
-- verified facts and clearly separated inference/scenario;
-- methodology and Research OS explanations;
-- selected themes and event chains;
-- selected historical research with immutable timestamps;
-- price/fundamental divergence discussion;
-- falsification points and what changed after publication;
-- data freshness and source-health disclosures;
-- selected daily/weekly/monthly research summaries.
-
-### Member Reading Layer
-
-If a member product is later created, the preferred added value is deeper research infrastructure rather than hidden mechanical recommendations. Examples include:
-
-- richer historical databases and research chains;
-- complete theme dossiers;
-- deeper Model Audit and scenario tables;
-- leading-indicator archives and research tools;
-- research-process reviews and educational material;
-- structured archives, filters, and comparative views.
-
-Any paid product that moves toward specific securities recommendations, forecasts, personalized advice, position sizing, entry/exit instructions, or other regulated investment-advisory activity requires jurisdiction-specific legal/compliance review before launch. A disclaimer alone must not be treated as a substitute for that review.
-
-## 3. Publication eligibility
-
-Before material is exported to a public/member layer, check:
-
-1. **Evidence state** — F/I/S must remain visibly separated. R/unverified material should normally stay private until independently verified; exceptional discussion of rumors must be clearly identified as unverified and should not support an investment conclusion.
-2. **Freshness** — show the relevant data/report cutoff. Stale machine data cannot be presented as current.
-3. **Source role** — NEWS/discovery is not a truth layer. Material investment facts should preferentially link back to primary/official/company sources or reliable independent verification.
-4. **Transmission chain** — avoid publishing an industry story as a company-profit conclusion without Company Exposure → Revenue → Margin/Expenses → Profit → CFO/FCF reasoning.
-5. **Price In / falsification** — important research pieces should state what the market appears to price in, what would confirm the thesis, and what would falsify it.
-6. **Model Audit** — material company conclusions should disclose unresolved audit gaps where relevant.
-7. **Corrections** — later corrections, falsifications, or contradictory evidence must be preserved rather than silently rewriting the historical publication.
-
-## 4. Content that should remain private by default
-
-Do not automatically export:
-
-- raw `data/news/state.json` or internal dedup state;
-- unreviewed raw discovery queues and low-confidence candidate dumps;
-- credentials, tokens, private connector/config secrets, internal account information, or private contact details;
-- unpublished personal notes or private portfolio/position information unless explicitly approved for publication;
-- internal process/debug information that adds no reader value;
-- material whose third-party licence or redistribution terms do not permit republication.
-
-Raw machine data may be published only when its source/redistribution terms and presentation context are appropriate. Derived metrics should identify the data cutoff and the fact that machine hints are diagnostic rather than formal research conclusions.
-
-## 5. Public-facing research discipline
-
-Public/member content must not mechanically map M stage, PF Gap, crowding, Distribution Risk, NEWS score, or machine hints to BUY/SELL/position-sizing instructions.
-
-The preferred public identity is an independent, auditable research process: explain how hypotheses form, how they are verified, what evidence is missing, and when they fail.
-
-For every substantial public research piece, prefer the same quality gate used internally:
-
-- What changed?
-- Why does it matter?
-- What is the transmission mechanism?
-- What does the market appear to price in?
-- What evidence would confirm it?
-- What evidence would falsify it?
-
-## 6. Disclosure and correction policy
-
-Before a real public/member launch, add a publication-level disclosure template covering at minimum:
-
-- publication timestamp and data cutoff;
-- source attribution and evidence type;
-- conflicts/positions disclosure policy appropriate to the publisher;
-- correction/version-history policy;
-- statement that research is informational/educational and not personalized advice, while recognizing that legal obligations depend on the actual product, audience, jurisdiction, and charging model.
-
-Do not rely on boilerplate wording to justify a product design that is substantively regulated.
-
-## 7. Technical publication boundary
-
-When a public site is implemented, prefer a separate repository or deployment target containing only explicitly exported files. Use an allowlist, not a blocklist.
-
-A future exporter should read from the private repository and write only approved publication artifacts. It should never mirror the private repository wholesale.
-
-Until that filtered exporter/site exists, keep this repository private and treat `dashboard/README.md` as an internal workbench rather than a public website.
+`metadata/publication-manifest.json` is the explicit website output configuration. Before any website release, validate the manifest, build the site, check that historical reports are readable and raw state/credentials are absent from the generated artifact, and only then deploy GitHub Pages. Repository integrity, report immutability, source freshness and editorial evidence rules remain in force independently of whether the repository is public.

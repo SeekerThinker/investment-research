@@ -26,22 +26,35 @@ jobs:
   build:
     runs-on: ubuntu-latest
     steps:
-      - name: Checkout private canonical repository
+      - name: Checkout public canonical repository
         uses: actions/checkout@v7
       - name: Set up Python
         uses: actions/setup-python@v7
         with:
           python-version: "3.12"
-      - name: Build allowlisted public artifact
+      - name: Build free-reading website
         run: python monitor/build_public_site.py --output _site
-      - name: Assert private files are absent
+      - name: Validate published artifact
         shell: bash
         run: |
+          test -f _site/content/index.json
           test ! -e _site/tracking
           test ! -e _site/index
           test ! -e _site/data/news/state.json
           test ! -e _site/data/news/candidates
-          grep -q '"full_text_in_public_artifact": false' _site/content/index.json
+          python - <<'PY'
+          import json
+          from pathlib import Path
+          site=Path('_site')
+          data=json.loads((site/'content/index.json').read_text(encoding='utf-8'))
+          assert data['sponsorship']['no_access_benefit'] is True
+          assert data['sponsorship']['enabled'] is False or data['sponsorship']['url'].startswith('https://')
+          assert all(r['access']=='public' and (site/r['path']).is_file() for r in data['archive'])
+          assert all(r['access']=='public' and (site/r['path']).is_file() for r in data['latest'])
+          assert len(data['archive'])==sum(len(list(Path('reports',kind).glob('*.md'))) for kind in ('daily','weekly','monthly'))
+          assert 'member' not in (site/'assets/app.js').read_text(encoding='utf-8').lower()
+          print('PASS: public full-report archive, no paywall, support gate, site allowlist')
+          PY
       - name: Configure GitHub Pages
         uses: actions/configure-pages@v6
       - name: Upload Pages artifact
