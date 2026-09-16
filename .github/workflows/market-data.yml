@@ -1,0 +1,17 @@
+name: Daily Market Data
+on:
+  workflow_dispatch:
+  schedule:
+    - cron: "25 16 * * 1-5"
+      timezone: Asia/Shanghai
+permissions:
+  contents: write
+jobs:
+  validate:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - run: python -m py_compile monitor/market_providers.py monitor/market_behavior_v2.py monitor/render_dashboard.py monitor/validate_research_os.py
