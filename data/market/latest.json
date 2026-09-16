@@ -1,5 +1,5 @@
 {
-  "collected_at": "2026-09-16T03:39:27Z",
+  "collected_at": "2026-09-16T03:44:49Z",
   "source_role": "multi_provider_research_convenience_market_data",
   "provider_policy": {
     "A_primary": "BaoStock",
@@ -14,13 +14,9 @@
       "success": 10,
       "fallbacks": 0
     },
-    "akshare_eastmoney": {
-      "success": 1,
-      "fallbacks": 0
-    },
     "akshare_sina": {
-      "success": 2,
-      "fallbacks": 2
+      "success": 3,
+      "fallbacks": 3
     }
   },
   "items": [
@@ -58,8 +54,10 @@
       "verification_stage": "V5",
       "research_stage": "活跃研究",
       "market": "HK",
-      "provider": "akshare_eastmoney",
-      "provider_attempts": [],
+      "provider": "akshare_sina",
+      "provider_attempts": [
+        "akshare_eastmoney: ('Connection aborted.', RemoteDisconnected('Remote end closed connection without response'))"
+      ],
       "benchmark_provider": "yfinance",
       "history_rows": 152,
       "insufficient_history": false,
@@ -67,14 +65,14 @@
       "last_close": 24.16,
       "return_5d_pct": -2.89,
       "return_20d_pct": 2.51,
-      "benchmark_return_5d_pct": -2.51,
-      "benchmark_return_20d_pct": -3.35,
-      "relative_5d_pct": -0.38,
-      "relative_20d_pct": 5.86,
+      "benchmark_return_5d_pct": -2.5,
+      "benchmark_return_20d_pct": -3.34,
+      "relative_5d_pct": -0.39,
+      "relative_20d_pct": 5.85,
       "volume_ratio_20d": 0.62,
       "volume_percentile_60d_pct": 6.67,
       "distance_from_20d_high_pct": -4.96,
-      "realized_volatility_20d_pct": 22.73,
+      "realized_volatility_20d_pct": 22.72,
       "phase_hint": "未判定",
       "gap_hint": "未判定",
       "crowding_hint": "中",
@@ -125,10 +123,10 @@
       "last_close": 9.975,
       "return_5d_pct": -0.76,
       "return_20d_pct": 4.75,
-      "benchmark_return_5d_pct": -2.51,
-      "benchmark_return_20d_pct": -3.35,
-      "relative_5d_pct": 1.75,
-      "relative_20d_pct": 8.11,
+      "benchmark_return_5d_pct": -2.5,
+      "benchmark_return_20d_pct": -3.34,
+      "relative_5d_pct": 1.74,
+      "relative_20d_pct": 8.1,
       "volume_ratio_20d": 0.81,
       "volume_percentile_60d_pct": 21.67,
       "distance_from_20d_high_pct": -3.25,
@@ -379,10 +377,10 @@
       "last_close": 18.45,
       "return_5d_pct": 2.56,
       "return_20d_pct": 21.38,
-      "benchmark_return_5d_pct": -2.51,
-      "benchmark_return_20d_pct": -3.35,
-      "relative_5d_pct": 5.07,
-      "relative_20d_pct": 24.74,
+      "benchmark_return_5d_pct": -2.5,
+      "benchmark_return_20d_pct": -3.34,
+      "relative_5d_pct": 5.06,
+      "relative_20d_pct": 24.73,
       "volume_ratio_20d": 0.65,
       "volume_percentile_60d_pct": 20.0,
       "distance_from_20d_high_pct": -6.35,
