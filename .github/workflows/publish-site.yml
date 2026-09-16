@@ -1,0 +1,63 @@
+name: Publish Research Site
+
+on:
+  workflow_dispatch:
+  push:
+    branches: [main]
+    paths:
+      - "latest/**"
+      - "reports/**"
+      - "data/market/health.json"
+      - "data/news/health.json"
+      - "metadata/publication-policy.md"
+      - "metadata/publication-manifest.json"
+      - "site/**"
+      - "monitor/build_public_site.py"
+      - ".github/workflows/publish-site.yml"
+
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+concurrency:
+  group: research-pages
+  cancel-in-progress: true
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout private canonical repository
+        uses: actions/checkout@v7
+      - name: Set up Python
+        uses: actions/setup-python@v7
+        with:
+          python-version: "3.12"
+      - name: Build allowlisted public artifact
+        run: python monitor/build_public_site.py --output _site
+      - name: Assert private files are absent
+        shell: bash
+        run: |
+          test ! -e _site/tracking
+          test ! -e _site/index
+          test ! -e _site/data/news/state.json
+          test ! -e _site/data/news/candidates
+          grep -q '"full_text_in_public_artifact": false' _site/content/index.json
+      - name: Configure GitHub Pages
+        uses: actions/configure-pages@v5
+      - name: Upload Pages artifact
+        uses: actions/upload-pages-artifact@v4
+        with:
+          path: _site
+
+  deploy:
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    runs-on: ubuntu-latest
+    needs: build
+    steps:
+      - name: Deploy to GitHub Pages
+        id: deployment
+        uses: actions/deploy-pages@v4

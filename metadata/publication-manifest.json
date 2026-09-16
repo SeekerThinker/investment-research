@@ -1,0 +1,24 @@
+{
+  "version": 1,
+  "canonical_repository": "SeekerThinker/investment-research",
+  "public": {
+    "latest_summaries": ["daily", "weekly", "monthly"],
+    "historical_catalog": true,
+    "historical_full_text": false,
+    "health": "curated-only"
+  },
+  "member": {
+    "catalog_visible_publicly": true,
+    "full_text_in_public_artifact": false,
+    "planned": ["full report archive", "theme dossiers", "leading indicator archive", "model audit views", "comparison tools"]
+  },
+  "private_never_auto_export": [
+    "tracking/**",
+    "index/**",
+    "data/news/state.json",
+    "data/news/candidates/**",
+    "private notes",
+    "credentials/tokens",
+    "portfolio/positions"
+  ]
+}
