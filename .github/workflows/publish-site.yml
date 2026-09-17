@@ -9,6 +9,7 @@ on:
       - "reports/**"
       - "philosophy/**"
       - "metadata/daily-coverage-policy.md"
+      - "metadata/news-investment-impact-policy.md"
       - "metadata/philosophy-integration.md"
       - "metadata/publication-policy.md"
       - "metadata/publication-manifest.json"
@@ -17,6 +18,7 @@ on:
       - "monitor/include_intraday_site.py"
       - "monitor/curate_homepage.py"
       - "monitor/test_public_site_feed.py"
+      - "monitor/test_two_focus.py"
       - "monitor/validate_philosophy.py"
       - ".github/workflows/publish-site.yml"
 
@@ -41,23 +43,28 @@ jobs:
           python-version: "3.12"
       - name: Validate philosophy version, references and execution bridge
         run: python monitor/validate_philosophy.py
-      - name: Test independent broad daily feed extraction
+      - name: Test source-grounded extraction
         run: python monitor/test_public_site_feed.py
+      - name: Test two-focus classification and input validation
+        run: python monitor/test_two_focus.py
       - name: Build free-reading website
         run: python monitor/build_public_site.py --output _site
-      - name: Include current immutable intraday report and link homepage details
+      - name: Include current immutable intraday full report
         run: python monitor/include_intraday_site.py
-      - name: Curate only the latest daily; preserve weekly and monthly
+      - name: Curate daily opportunity and risk; preserve weekly and monthly
         run: python monitor/curate_homepage.py
-      - name: Validate published artifact, readable sections and daylight theme
+      - name: Validate published artifact, two focus groups and daylight theme
         shell: bash
         run: |
           test -f _site/content/index.json
           test -f _site/assets/feed.css
+          test -f _site/assets/two-focus.js
           test ! -e _site/tracking
           test ! -e _site/index
           test ! -e _site/data/news/state.json
           test ! -e _site/data/news/candidates
+          node --check _site/assets/app.js
+          node --check _site/assets/two-focus.js
           python - <<'PY'
           import json
           import re
@@ -74,18 +81,27 @@ jobs:
           assert 'member' not in (site/'assets/app.js').read_text(encoding='utf-8').lower()
           feed=data['feed']
           assert set(feed)=={'daily','market','weekly','monthly','risk'}
-          assert 1<=len(feed['daily'])<=12, 'daily homepage must be curated, not publish every discovery'
-          assert not feed['market'] and not feed['risk'], 'daily market/risk details belong in the full free report'
+          assert 1<=len(feed['daily'])<=12, 'only daily is capped'
+          assert not feed['market'] and not feed['risk'], 'daily detail remains in full report'
           latest_types={x['type'] for x in data['latest']}
           if 'weekly' in latest_types:
-              assert feed['weekly'], 'weekly homepage section must be preserved'
+              assert feed['weekly'], 'weekly homepage content cannot disappear'
           if 'monthly' in latest_types:
-              assert feed['monthly'], 'monthly homepage section must be preserved'
-          assert data['editorial']['selection']=='researcher-curated-latest-summary'
-          assert data['editorial']['daily_count']==len(feed['daily'])
-          assert len(data['editorial']['facets'])<=7
-          assert data['editorial']['weekly_monthly_independent'] is True
-          assert all(all(field in row['summary'] for field in ('影响：','机会：','风险：','强度/期限：','已定价/验证：')) for row in feed['daily'])
+              assert feed['monthly'], 'monthly homepage content cannot disappear'
+          editorial=data['editorial']
+          assert editorial['selection']=='researcher-marked-two-focus-latest-summary'
+          assert editorial['daily_count']==len(feed['daily'])
+          assert len(editorial['facets'])<=7
+          assert editorial['weekly_monthly_independent'] is True
+          assert editorial['focus_counts']['opportunity']+editorial['focus_counts']['risk']==len(feed['daily'])
+          for row in feed['daily']:
+              assert row['focus'] in ('opportunity','risk')
+              required=('事实：','传导：','潜在预期差：','强度/期限：','验证：')
+              assert all(x in row['summary'] for x in required)
+              if row['focus']=='opportunity':
+                  assert '成立条件：' in row['summary'] and '风险触发：' not in row['summary']
+              else:
+                  assert '风险触发：' in row['summary'] and '成立条件：' not in row['summary']
           for channel,rows in feed.items():
               for row in rows:
                   assert row['title'] and row['period'] and row['source']
@@ -96,24 +112,26 @@ jobs:
               assert (site/'content/reports/intraday'/f"{daily['archive_period']}.md").is_file()
               assert all(x['detail_period']==daily['archive_period'] for x in feed['daily'])
           app=(site/'assets/app.js').read_text(encoding='utf-8')
-          assert "['daily','日报精选']" in app
-          assert "['weekly','周报观察']" in app and "['monthly','月度视角']" in app
+          two=(site/'assets/two-focus.js').read_text(encoding='utf-8')
           assert 'analysisParts' in app and 'analysisBlock' in app
+          assert "x.focus === 'opportunity'" in two and "x.focus === 'risk'" in two
+          assert "briefSection('weekly'" in two and "briefSection('monthly'" in two
           assert 'analysis-lines' in app and 'analysis-line' in app
           styles=(site/'assets/styles.css').read_text(encoding='utf-8')
           feed_styles=(site/'assets/feed.css').read_text(encoding='utf-8')
           html=(site/'index.html').read_text(encoding='utf-8')
+          assert 'two-focus.js?v=' in html and 'app.js?v=' in html
           assert 'color-scheme: light' in styles and 'content="light"' in html
           assert 'background: #fff;' in styles and 'background: #fff;' in feed_styles
           assert 'background:linear-gradient' not in styles+feed_styles
           assert 'linear-gradient(' not in styles+feed_styles
-          assert '#d2daf0' not in feed_styles, 'dark-theme light-colored feed copy detected'
+          assert '#d2daf0' not in feed_styles
           assert re.search(r'\.brief-card\s*\{[^}]*background:\s*#fff\s*;',feed_styles,re.S)
           assert re.search(r'\.analysis-line\s*\{[^}]*grid-template-columns:',feed_styles,re.S)
           assert re.search(r'\.reader pre\s*\{[^}]*background:\s*#fff\s*;',styles,re.S)
           assert 'assets/feed.css?v=daylight-' in html and 'assets/styles.css?v=daylight-' in html
-          assert 'philosophy/README.md' in html, 'separate philosophy navigation missing'
-          print('PASS: curated daily + preserved weekly/monthly + structured impact rows + free archive + white theme')
+          assert 'philosophy/README.md' in html
+          print('PASS: two daily focus groups + independent weekly/monthly + structured white reading + free archive')
           PY
       - name: Configure GitHub Pages
         uses: actions/configure-pages@v6
