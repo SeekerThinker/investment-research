@@ -47,9 +47,9 @@ jobs:
         run: python monitor/build_public_site.py --output _site
       - name: Include current immutable intraday report and link homepage details
         run: python monitor/include_intraday_site.py
-      - name: Curate the homepage from the explicitly selected latest daily
+      - name: Curate only the latest daily; preserve weekly and monthly
         run: python monitor/curate_homepage.py
-      - name: Validate published artifact, curated investment themes and daylight theme
+      - name: Validate published artifact, readable sections and daylight theme
         shell: bash
         run: |
           test -f _site/content/index.json
@@ -74,11 +74,17 @@ jobs:
           assert 'member' not in (site/'assets/app.js').read_text(encoding='utf-8').lower()
           feed=data['feed']
           assert set(feed)=={'daily','market','weekly','monthly','risk'}
-          assert 1<=len(feed['daily'])<=12, 'homepage must curate, not publish every discovery'
-          assert not any(feed[k] for k in ('market','risk','weekly','monthly')), 'extra home cards duplicate the curated daily feed'
+          assert 1<=len(feed['daily'])<=12, 'daily homepage must be curated, not publish every discovery'
+          assert not feed['market'] and not feed['risk'], 'daily market/risk details belong in the full free report'
+          latest_types={x['type'] for x in data['latest']}
+          if 'weekly' in latest_types:
+              assert feed['weekly'], 'weekly homepage section must be preserved'
+          if 'monthly' in latest_types:
+              assert feed['monthly'], 'monthly homepage section must be preserved'
           assert data['editorial']['selection']=='researcher-curated-latest-summary'
           assert data['editorial']['daily_count']==len(feed['daily'])
           assert len(data['editorial']['facets'])<=7
+          assert data['editorial']['weekly_monthly_independent'] is True
           assert all(all(field in row['summary'] for field in ('影响：','机会：','风险：','强度/期限：','已定价/验证：')) for row in feed['daily'])
           for channel,rows in feed.items():
               for row in rows:
@@ -89,7 +95,11 @@ jobs:
               daily=next(x for x in data['latest'] if x['type']=='daily')
               assert (site/'content/reports/intraday'/f"{daily['archive_period']}.md").is_file()
               assert all(x['detail_period']==daily['archive_period'] for x in feed['daily'])
-          assert '#home/' in (site/'assets/app.js').read_text(encoding='utf-8')
+          app=(site/'assets/app.js').read_text(encoding='utf-8')
+          assert "['daily','日报精选']" in app
+          assert "['weekly','周报观察']" in app and "['monthly','月度视角']" in app
+          assert 'analysisParts' in app and 'analysisBlock' in app
+          assert 'analysis-lines' in app and 'analysis-line' in app
           styles=(site/'assets/styles.css').read_text(encoding='utf-8')
           feed_styles=(site/'assets/feed.css').read_text(encoding='utf-8')
           html=(site/'index.html').read_text(encoding='utf-8')
@@ -99,11 +109,11 @@ jobs:
           assert 'linear-gradient(' not in styles+feed_styles
           assert '#d2daf0' not in feed_styles, 'dark-theme light-colored feed copy detected'
           assert re.search(r'\.brief-card\s*\{[^}]*background:\s*#fff\s*;',feed_styles,re.S)
-          assert re.search(r'\.brief-card p\s*\{[^}]*color:\s*#36465b\s*;',feed_styles,re.S)
+          assert re.search(r'\.analysis-line\s*\{[^}]*grid-template-columns:',feed_styles,re.S)
           assert re.search(r'\.reader pre\s*\{[^}]*background:\s*#fff\s*;',styles,re.S)
           assert 'assets/feed.css?v=daylight-' in html and 'assets/styles.css?v=daylight-' in html
           assert 'philosophy/README.md' in html, 'separate philosophy navigation missing'
-          print('PASS: curated <=12 homepage, full source report, philosophy, archive, white theme')
+          print('PASS: curated daily + preserved weekly/monthly + structured impact rows + free archive + white theme')
           PY
       - name: Configure GitHub Pages
         uses: actions/configure-pages@v6
