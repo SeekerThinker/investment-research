@@ -4,6 +4,12 @@ Public, auditable A-share and Hong Kong Stock Connect research project. All publ
 
 Website: https://seekerthinker.github.io/investment-research/ (free report archive and voluntary support; payment link not yet enabled).
 
+## Investment philosophy · 可持续演进的投资思想库
+
+**从这里开始**：[`philosophy/README.md`](philosophy/README.md) → [`philosophy/core-beliefs.md`](philosophy/core-beliefs.md) → [`philosophy/research-constitution.md`](philosophy/research-constitution.md)。这里收纳项目所有者随时讨论提出的长期价值、价格、风险与研究原则，**与每日新闻和有日期的研究结论分离**。核心文本是意旨整理稿，编辑者的操作化建议单独标注，不冒充所有者逐字确认或确定的市场事实。
+
+想法与追溯：[`philosophy/ideas.md`](philosophy/ideas.md) · [`philosophy/intake-and-propagation.md`](philosophy/intake-and-propagation.md) · [`philosophy/integration-map.md`](philosophy/integration-map.md) · [`philosophy/change-log.md`](philosophy/change-log.md)。执行桥梁：[`metadata/philosophy-integration.md`](metadata/philosophy-integration.md)。新思想经忠实提炼和版本记录后，检查其对市场/行业/公司/估值规范、报告结构、网站及日报/周报/月报任务的影响；只更新确实受影响的下游，明确未完成项。证据可推翻假设，历史报告保持不可变；没有可靠资料时不制造投资结论。
+
 ## Workbench
 
 - Research workbench: [`dashboard/`](dashboard/)
@@ -17,15 +23,19 @@ Website: https://seekerthinker.github.io/investment-research/ (free report archi
 
 The research system no longer treats news as the only discovery entry point.
 
-`Market Behavior + Leading Indicators + Narrative/Attention + Verification/Confirmation -> EVT -> THM -> HYP/CAT -> securities -> Model Audit -> daily/weekly/monthly review`
+`Philosophy / Research Constitution → Market Behavior + Leading Indicators + Narrative/Attention + Verification/Confirmation → EVT → THM → HYP/CAT → securities → Model Audit → daily/weekly/monthly review`
 
-The repository uses a Research OS to keep market behavior, evidence quality, thesis maturity, company exposure, fundamental realization and model consistency separate.
+The philosophy governs research questions and evidence discipline, **not predetermined market outcomes**. The Research OS keeps market behavior, evidence quality, thesis maturity, company exposure, fundamental realization and model consistency separate.
 
 ### Research OS
 
+- Philosophy-to-execution bridge: [`metadata/philosophy-integration.md`](metadata/philosophy-integration.md)
 - Research framework and lifecycle: [`metadata/research-os.md`](metadata/research-os.md)
 - Market behavior methodology: [`metadata/market-behavior.md`](metadata/market-behavior.md)
 - Source and evidence policy: [`metadata/source-policy.md`](metadata/source-policy.md)
+- Whole-market independent daily: [`metadata/daily-coverage-policy.md`](metadata/daily-coverage-policy.md)
+- Per-news investment impact: [`metadata/news-investment-impact-policy.md`](metadata/news-investment-impact-policy.md)
+- Long-horizon owner value: [`metadata/long-horizon-value-policy.md`](metadata/long-horizon-value-policy.md)
 - Evidence types: `F / I / S / R`
 - Fundamental realization stages: `V0–V5` (`N/A` where not applicable)
 - Market phases: `M0–M5`
@@ -55,12 +65,14 @@ The automated market-data adapter is a research convenience layer and is not exc
 - Candidate queue: `data/news/candidates/YYYY-MM-DD.jsonl`
 - Operational health: `data/news/health.json`
 - Research OS validator: `monitor/validate_research_os.py`
+- Philosophy/link integrity validator: `monitor/validate_philosophy.py`
 
 NEWS candidates are discovery inputs only. Daily and weekly research must verify material candidates against primary/independent sources before promoting them into structured research.
 
 ## Reports
 
 - Daily research: `reports/daily/`
+- Intraday additive research: `reports/intraday/`
 - Weekly research: `reports/weekly/`
 - Monthly research: `reports/monthly/`
 - Latest daily: `latest/daily.md`
