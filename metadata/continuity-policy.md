@@ -1,48 +1,21 @@
-# Daily Continuity Recovery Policy
+# Continuity & Historical Integrity Policy
 
-本文件定义日报发生日期缺口时的恢复规则。它是 `metadata/research-os.md` 的补充规则，不改变既有 V / M / PF / Catalyst / evidence schema；若与 Research OS、Market Behavior 或 Source Policy 冲突，以三份核心 metadata 文件为准。
+本文件保护研究系统的历史真实性，但**不再要求日报开头执行 Daily Continuity Recovery Guard 或逐项复核前日报告**。日报内容与覆盖面优先遵守 `metadata/daily-coverage-policy.md`；历史及结构化状态仍遵守 `metadata/research-os.md`、`metadata/market-behavior.md` 与 `metadata/source-policy.md`。
 
-## 1. 触发条件
+## 1. 独立日报与跨日维护分开
 
-每次日报启动时，先读取 `reports/daily/` 中最新不可变日报日期，并与当前日报日期比较，同时核对 `latest/daily.md`、当前 `index/` / `tracking/` 最近更新时间以及 `data/market/`、`data/news/` 可用时间范围。
+每天独立扫描该期时间窗口的 A 股、港股和重要跨市场驱动，发布多栏目资讯；不把昨日的待办、连续性缺口或某个既有主题设为日报正文入口。过去的假设和日报可以用作背景、校验来源或比较基准，**不是必须逐项重读、回复和在今日版面重刊**。只有旧事件发生真正新增且可核验、对本期市场有重要影响时，才以新事件日期写入今日条目，不把纯回顾冒充新发现。
 
-如果最新不可变日报不是前一自然日，不自动视为错误。必须先判断缺口中是否包含交易日，或是否存在已经到期但未闭环的下一验证、Catalyst、Leading Indicator、Hypothesis、Market Behavior 或 risk-calendar 项目。
+## 2. 历史报告真实性
 
-## 2. Continuity Recovery 模式
+- `reports/daily/YYYY-MM-DD.md` 一经发布不可覆盖；真实缺失的日报日期永远保持缺失，不倒填历史内容、数据或当时不存在的判断。
+- `latest/daily.md` 指向真实最新一期不可变日报；每次写入前检查日期及 GitHub 仓库权限。不得编造缺失交易日行情、5D/20D、NEWS 或当时已知信息。
+- 核验时发现时间戳、ID、交叉引用或状态漂移，更新**当前** `index/`／`tracking/` 并在必要时记录审计说明；不得静默修改历史日报，不凭时间流逝升级 F/V/M/PF/HYP。
 
-如果存在缺失研究日或未闭环验证，则进入 `continuity recovery` 模式。
+## 3. 跨期验证的归属
 
-- 不得事后创建、补写或伪造缺失日期的 `reports/daily/YYYY-MM-DD.md`。
-- 不得用当前已知结果回写过去判断，不得制造 hindsight contamination。
-- 只允许在当前日期不可变日报中加入 `连续性补核 / Continuity Recovery` 部分。
-- 按时间顺序复核从上一份日报截止之后到当前正常约24小时研究窗口之前的关键事实、machine market data、NEWS discovery、已到期 CAT / LID / HYP / MBH 验证项和风险日历。
-- 明确区分“当时可知信息”和“之后才出现的信息”。
+到期验证、CAT/LID/HYP/MBH 进展和历史连续性复核属于后台研究状态维护，以及周报／月报的跨期复盘。无需为每份日报单列“连续性补核 / Continuity Recovery”，也无需先关闭旧任务才能独立完成当天全市场扫描。若尚未闭环，维护 `待验证`、截止时间及数据缺口；只有其当期出现实质性新证据时才进入日报正文。故障或研究缺口只在影响本期事实可靠性时于“覆盖与数据缺口”简短披露，不挤占新闻条目。
 
-## 3. 状态更新纪律
+## 4. 数据与时间边界
 
-连续性补核的目的，是关闭或重新标记未决验证，而不是补造历史报告。
-
-- 能由现有可审计证据确认的事项，可以更新当前 `index/` / `tracking/` 状态。
-- 无法确认的事项继续标记 `待验证`。
-- 不得因为日报缺失本身机械升级或降级 HYP、V、M、PF、crowding 或 distribution_risk。
-- NEWS、machine hints 和后验价格表现不得被倒推为过去已知事实。
-- 若缺口期间 machine market/news 数据缺失、陈旧或 degraded，必须披露数据截止时间和失败源，不得补造价格、5D/20D、成交量或历史 NEWS。
-
-## 4. 当前日报结构
-
-完成 continuity recovery 后，再执行正常的当前约24小时日报研究。
-
-当前日报必须清楚区分：
-
-1. `连续性补核 / Continuity Recovery`
-2. `今日新增信息`
-
-同一事实、催化或验证结果不得为了数量同时重复计入补核与“今日最重要”列表。若进入 continuity recovery 模式，应在日报开头说明覆盖日期范围和主要待闭环事项。
-
-## 5. 无有效缺口时
-
-如果日期间隔只来自周末、节假日或其他非交易日，并且没有未闭环的研究验证事项，则不需要制造补核内容。正常执行当日日报，并简要说明不存在需要恢复的研究缺口。
-
-## 6. 审计目标
-
-Continuity Recovery 的目标是保持 Research OS 的连续性、可审计性和时间顺序完整性，而不是追求每天都有一份历史文件。任何历史缺口都必须保留为真实项目历史的一部分。
+行情使用最近**真实已结束**的交易时段；新闻/公告注明事件与披露日期。周末、节假日、上游源 degraded 或缺少行情时，说明实际截止时间及未覆盖范围，不能把未交易解释为价格不确认或强行创造新闻。新旧信息不能重复计数。任何审计恢复不得改变 `reports/` 的不可变事实。
