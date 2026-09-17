@@ -8,12 +8,14 @@ on:
       - "latest/**"
       - "reports/**"
       - "philosophy/**"
+      - "metadata/daily-coverage-policy.md"
       - "metadata/philosophy-integration.md"
       - "metadata/publication-policy.md"
       - "metadata/publication-manifest.json"
       - "site/**"
       - "monitor/build_public_site.py"
       - "monitor/include_intraday_site.py"
+      - "monitor/curate_homepage.py"
       - "monitor/test_public_site_feed.py"
       - "monitor/validate_philosophy.py"
       - ".github/workflows/publish-site.yml"
@@ -45,7 +47,9 @@ jobs:
         run: python monitor/build_public_site.py --output _site
       - name: Include current immutable intraday report and link homepage details
         run: python monitor/include_intraday_site.py
-      - name: Validate published artifact, homepage briefs and daylight theme
+      - name: Curate the homepage from the explicitly selected latest daily
+        run: python monitor/curate_homepage.py
+      - name: Validate published artifact, curated investment themes and daylight theme
         shell: bash
         run: |
           test -f _site/content/index.json
@@ -70,18 +74,21 @@ jobs:
           assert 'member' not in (site/'assets/app.js').read_text(encoding='utf-8').lower()
           feed=data['feed']
           assert set(feed)=={'daily','market','weekly','monthly','risk'}
-          assert sum(map(len,feed.values()))>0, 'homepage must show actual research briefs'
+          assert 1<=len(feed['daily'])<=12, 'homepage must curate, not publish every discovery'
+          assert not any(feed[k] for k in ('market','risk','weekly','monthly')), 'extra home cards duplicate the curated daily feed'
+          assert data['editorial']['selection']=='researcher-curated-latest-summary'
+          assert data['editorial']['daily_count']==len(feed['daily'])
+          assert len(data['editorial']['facets'])<=7
+          assert all(all(field in row['summary'] for field in ('影响：','机会：','风险：','强度/期限：','已定价/验证：')) for row in feed['daily'])
           for channel,rows in feed.items():
               for row in rows:
                   assert row['title'] and row['period'] and row['source']
                   assert row['type'] in ('daily','weekly','monthly')
                   assert row['detail_period'] is None or any(a['type']==row['type'] and a['period']==row['detail_period'] for a in data['archive'])
-          assert any(feed[k] for k in ('daily','weekly','monthly'))
           if current_intraday:
               daily=next(x for x in data['latest'] if x['type']=='daily')
               assert (site/'content/reports/intraday'/f"{daily['archive_period']}.md").is_file()
-              assert feed['daily'] and all(x['detail_period']==daily['archive_period'] for x in feed['daily'])
-              assert all('影响：' in x['summary'] and '风险：' in x['summary'] for x in feed['daily']) or daily['archive_period']=='2026-09-17-0908'
+              assert all(x['detail_period']==daily['archive_period'] for x in feed['daily'])
           assert '#home/' in (site/'assets/app.js').read_text(encoding='utf-8')
           styles=(site/'assets/styles.css').read_text(encoding='utf-8')
           feed_styles=(site/'assets/feed.css').read_text(encoding='utf-8')
@@ -96,7 +103,7 @@ jobs:
           assert re.search(r'\.reader pre\s*\{[^}]*background:\s*#fff\s*;',styles,re.S)
           assert 'assets/feed.css?v=daylight-' in html and 'assets/styles.css?v=daylight-' in html
           assert 'philosophy/README.md' in html, 'separate philosophy navigation missing'
-          print('PASS: philosophy link, dated source-backed impact feed, free archive and white theme')
+          print('PASS: curated <=12 homepage, full source report, philosophy, archive, white theme')
           PY
       - name: Configure GitHub Pages
         uses: actions/configure-pages@v6
