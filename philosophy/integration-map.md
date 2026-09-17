@@ -1,22 +1,22 @@
 # 思想 → 方法 → 报告 → 网站与任务：依赖关系图（v0.1）
 
-> 用途：每次思想对话入库，都对**本表逐项做影响分析**，记录 `已修改 / 无需修改（理由） / 待处理（障碍）`。这里是核对清单，不等于声称每个路径都必须改动。涉及已有历史报告时一律不回写。变更日志见 [`change-log.md`](change-log.md)；增量意旨见 [`ideas.md`](ideas.md)。
+> 每次思想对话入库都对**本表逐项做影响分析**，记录 `已修改 / 无需修改（理由） / 待处理（障碍）`。这是一份核对清单，不表示每个路径都必须改动；历史不可变报告不回写。具体成果和回执见 [`change-log.md`](change-log.md)，新增观点见 [`ideas.md`](ideas.md)。
 
-| 层级 | 文件/对象 | 依赖关系与必查动作 | 本次基线状态（2026-09-17） |
+| 层级 | 文件/对象 | 新思想必须核查的影响 | 2026-09-17 v0.1 接线情况 |
 | --- | --- | --- | --- |
-| 0 思想原意 | `philosophy/ideas.md`, `core-beliefs.md` | 记录所有者意旨、状态、Pxx及冲突；编辑者推论另列 | 已建立；提炼稿尚未逐字审核 |
-| 1 研究原则 | `philosophy/research-constitution.md`, `intake-and-propagation.md` | 研究一致性门槛、随时收纳与版本追踪 | 已建立；可迭代 |
-| 2 统一操作系统 | `metadata/research-os.md`, `metadata/source-policy.md`, `metadata/continuity-policy.md` | 核对事件传导、F/I/S/R、证伪与不可变记录；不得以思想覆盖事实 | 已有；需引用思想入口 |
-| 3 专业方法 | `metadata/long-horizon-value-policy.md`, `metadata/news-investment-impact-policy.md`, `metadata/daily-coverage-policy.md`, `metadata/market-behavior.md` | 将长周期估值、逐条投资映射、全市场独立扫描、量价纪律具体化 | 已有；需引用思想入口 |
-| 4 研究数据与状态 | `data/market/`, `data/news/`, `index/`, `tracking/` | 检查实际可得数据、证据链接、失败/证伪，按当期新证据增量维护 | 不回填事实；无新事实无需改动 |
-| 5 新研究产物 | `reports/daily/`, `reports/intraday/`, `reports/weekly/`, `reports/monthly/`, `latest/` | 新稿注明思想版本/原则、证据缺口；各摘要保留影响、机会/风险；旧报告不可变 | 新稿起生效；历史不回写 |
-| 6 网站呈现 | `monitor/build_public_site.py`, `monitor/include_intraday_site.py`, `site/`, `metadata/publication-*` | 摘要直接可读、正文免费、思想库与当期资讯分别展示、白色单列阅读 | 网站需补独立思想入口；不得暴露机器候选/敏感数据 |
-| 7 定时执行 | 日报 `6aaa04cee1548191898c93ee3ccc2f0e`；周报 `6aaa04d985a481918cc3115219063054`；月报 `6aaa04e3e97c8191b53f52f6fb59f477` | 每次先读思想库和最新版专业规范、报告记录版本；既有亚洲/上海执行时间不变 | 本次将同步检查和更新；核对实际任务回执 |
-| 8 测试与发布 | `monitor/validate_philosophy.py`, `.github/workflows/philosophy-integrity.yml`, `.github/workflows/publish-site.yml` | 检查引用存在、Pxx/IDEA、版本、关键依赖及网站公开边界；工作流失败不能声称部署成功 | 待建立/接线并验证 |
-| 9 导航和说明 | 根 `README.md`、`philosophy/README.md`、网站独立页面 | 让读者能区分个人研究思想、具体方法和有日期的投资资讯 | 根README及网站待加入口 |
+| 0 原始思想 | `philosophy/ideas.md`、`core-beliefs.md` | 忠实记录所有者意旨、状态、Pxx与冲突，编辑者推论另列 | 已建立 P01—P08、IDEA-20260917-01 至 -08；原意整理稿待逐字审核 |
+| 1 研究宪章 | `philosophy/research-constitution.md`、`intake-and-propagation.md` | 研究一致性、反证、随时收纳与版本跟踪 | 已建立，后续逐次增量调整 |
+| 2 统一操作系统 | `metadata/research-os.md`、`source-policy.md`、`continuity-policy.md`、[`metadata/philosophy-integration.md`](../metadata/philosophy-integration.md) | 证据层级、时间、证伪及不可变历史；思想不能覆盖事实 | 已建立统一思想桥接入口；既有专业纪律不被替换 |
+| 3 专业方法 | `metadata/long-horizon-value-policy.md`、`news-investment-impact-policy.md`、`daily-coverage-policy.md`、`market-behavior.md` | 长期估值、逐条投资映射、独立全市场扫描、量价反证是否需修订 | 既有专业规范继续适用，桥接文件统一引用；本次无新增市场假设需改其定义 |
+| 4 数据和研究状态 | `data/market/`、`data/news/`、`index/`、`tracking/` | 新证据/假设/反例可否入库、是否需要增量更新 | 无新市场事实，故不回填或改写 |
+| 5 新研究产物 | `reports/daily/`、`reports/intraday/`、`reports/weekly/`、`reports/monthly/`、`latest/` | 新稿标思想版本/Pxx、证据缺口及冲突；摘要保留影响和风险 | 三个定时任务已更新；仅未来新稿生效，历史不回写 |
+| 6 网站 | `monitor/build_public_site.py`、`include_intraday_site.py`、`site/`、`metadata/publication-*` | 摘要直读、全文免费、思想与日期资讯分离、白底单列 | 已加独立“投资思想”外链至 GitHub 公开思想库；Pages部署验证成功；未复制思想全文到网站内容包 |
+| 7 日/周/月任务 | 日报 `6aaa04cee1548191898c93ee3ccc2f0e`、周报 `6aaa04d985a481918cc3115219063054`、月报 `6aaa04e3e97c8191b53f52f6fb59f477` | 每次先读最新思想库及专业规范、引用版本并保留既有研究纪律；检查真实任务回执 | 三项 `automations.update` 回执均 SUCCESS；原定北京时间 07:00/周一02:00/月首01:00不变 |
+| 8 自动检查 | `monitor/validate_philosophy.py`、`.github/workflows/philosophy-integrity.yml`、`.github/workflows/publish-site.yml` | 文件/链接/Pxx/IDEA/入口/发布范围与站点回归；语义仍需人工审查 | [独立思想校验成功](https://github.com/SeekerThinker/investment-research/actions/runs/35179743552)；[Pages构建与部署成功](https://github.com/SeekerThinker/investment-research/actions/runs/35179616613) |
+| 9 公开导航 | 根 `README.md`、`philosophy/README.md`、网站单独“投资思想”链接 | 区分个人思想、方法和日期资讯 | 已更新；思想仍为 v0.1 所有者意旨提炼草案 |
 
-## 变更传播检查模板
+## 每次更新的传播记录模板
 
-每次新增 `IDEA-*` 后，在 [`change-log.md`](change-log.md) 写：`思想版本 / 触发IDEA / 涉及Pxx / 文件改动 / 日周月任务回执 / 测试与网站部署结果 / 无需改动及理由 / 未完成事项`。先改上游，后改执行端；若任务改动失败，必须注明待处理，不应称“全体系已同步”。
+在 [`change-log.md`](change-log.md) 填写：`思想版本 / 触发IDEA / 涉及Pxx / 文件改动 / 日周月任务回执 / 测试与网站部署结果 / 无需改动及理由 / 未完成事项`。先改上游、后改执行端；若任务更新或测试失败，记录实际失败，不称“全面同步”。
 
-**冲突优先顺序**：可复核事实及法律/安全限制 > 可验证的证据纪律/历史不可变 > 已确认研究原则 > 编辑者操作化建议 > 探索性想法。这里的顺序是**研究流程冲突解决办法**，不是对政治、证券或投资结果的排名；任何核心思想都可在新事实出现时被公开修订。
+**冲突处理**：可核验事实及安全/法律要求先于流程偏好，已确认的研究原则先于编辑者建议与探索性想法；这只是研究过程的处理约定，不是投资、证券或政治选择的价值排序。原则可由事实和后续讨论推动修订。
