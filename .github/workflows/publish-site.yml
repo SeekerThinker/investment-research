@@ -7,12 +7,15 @@ on:
     paths:
       - "latest/**"
       - "reports/**"
+      - "philosophy/**"
+      - "metadata/philosophy-integration.md"
       - "metadata/publication-policy.md"
       - "metadata/publication-manifest.json"
       - "site/**"
       - "monitor/build_public_site.py"
       - "monitor/include_intraday_site.py"
       - "monitor/test_public_site_feed.py"
+      - "monitor/validate_philosophy.py"
       - ".github/workflows/publish-site.yml"
 
 permissions:
@@ -34,6 +37,8 @@ jobs:
         uses: actions/setup-python@v7
         with:
           python-version: "3.12"
+      - name: Validate philosophy version, references and execution bridge
+        run: python monitor/validate_philosophy.py
       - name: Test independent broad daily feed extraction
         run: python monitor/test_public_site_feed.py
       - name: Build free-reading website
@@ -90,7 +95,8 @@ jobs:
           assert re.search(r'\.brief-card p\s*\{[^}]*color:\s*#36465b\s*;',feed_styles,re.S)
           assert re.search(r'\.reader pre\s*\{[^}]*background:\s*#fff\s*;',styles,re.S)
           assert 'assets/feed.css?v=daylight-' in html and 'assets/styles.css?v=daylight-' in html
-          print('PASS: dated source-backed impact feed, linked full intraday report, free archive and white theme')
+          assert 'philosophy/README.md' in html, 'separate philosophy navigation missing'
+          print('PASS: philosophy link, dated source-backed impact feed, free archive and white theme')
           PY
       - name: Configure GitHub Pages
         uses: actions/configure-pages@v6
