@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Build the free-reading website and source-grounded, date-labelled homepage briefs."""
+"""Build the public reading site from actual, dated research; never synthesize news."""
 from __future__ import annotations
 
 import argparse
@@ -60,7 +60,7 @@ def checked_manifest() -> dict:
 
 
 def plain_markdown(value: str) -> str:
-    """Remove only presentational Markdown; do not paraphrase source claims."""
+    """Remove presentation-only Markdown, without changing source claims."""
     value = re.sub(r"\[([^\]]+)\]\(https?://[^)]+\)", r"\1", value)
     value = value.replace("**", "").replace("`", "")
     return re.sub(r"\s+", " ", value).strip()
@@ -79,7 +79,7 @@ def split_brief(raw: str) -> tuple[str, str]:
 
 
 def section_items(markdown: str, heading_match, *, numbered_only: bool, limit: int) -> list[tuple[str, str]]:
-    """Extract existing Markdown bullets from one matched section; no generated research text."""
+    """Extract only actual bullets from one source section, never invent or backfill."""
     in_section = False
     result: list[tuple[str, str]] = []
     for line in markdown.splitlines():
@@ -91,9 +91,9 @@ def section_items(markdown: str, heading_match, *, numbered_only: bool, limit: i
             continue
         if not in_section:
             continue
-        bullet = re.match(r"^\s*(?:\d+[.、)]\s+" + (r"" if numbered_only else r"|[-*]\s+") + r")(.+?)\s*$", line)
-        if bullet:
-            title, summary = split_brief(bullet.group(1))
+        bullet = re.match(r"^\s*(\d+[.、)]|[-*])\s+(.+?)\s*$", line)
+        if bullet and (not numbered_only or bullet.group(1)[0].isdigit()):
+            title, summary = split_brief(bullet.group(2))
             if title:
                 result.append((title, summary))
             if len(result) >= limit:
@@ -153,20 +153,35 @@ def build(out: Path) -> None:
         latest.append({"type": kind, "label": label, "title": title_of(summary, f"Latest {label}"),
                        "path": f"content/latest/{kind}.md", "archive_period": period,
                        "period": report_date, "access": "public"})
-        key_points = section_items(summary, lambda heading: "核心结论" in heading,
-                                   numbered_only=True, limit=7)
-        feed[kind] = feed_rows(key_points, kind, label, report_date, period,
-                               f"latest/{kind}.md", "核心结论")
+        summary_points = section_items(summary, lambda heading: "核心结论" in heading,
+                                       numbered_only=True, limit=40 if kind == "daily" else 12)
         if kind == "daily" and period:
             body = read_text(archive_dir / f"{period}.md")
-            market = section_items(body, lambda heading: "市场行为变化" in heading,
-                                   numbered_only=True, limit=7)
-            risks = section_items(body, lambda heading: "伪催化" in heading or "价格领先风险" in heading,
-                                  numbered_only=False, limit=4)
+            # New daily reports publish their independent whole-market panorama;
+            # old reports retain their actual, smaller summary rather than fictional padding.
+            panorama = section_items(body, lambda heading: "全市场资讯速览" in heading,
+                                     numbered_only=True, limit=40)
+            if panorama:
+                feed["daily"] = feed_rows(panorama, kind, label, report_date, period,
+                                          f"reports/daily/{period}.md", "全市场资讯速览")
+            else:
+                feed["daily"] = feed_rows(summary_points, kind, label, report_date, period,
+                                          f"latest/{kind}.md", "核心结论")
+            market = section_items(body, lambda heading: "市场行为观察" in heading or "市场行为变化" in heading,
+                                   numbered_only=True, limit=18)
+            risks = section_items(body, lambda heading: "主要风险与验证" in heading or "误导性叙事" in heading
+                                  or "伪催化" in heading or "价格领先风险" in heading,
+                                  numbered_only=False, limit=12)
             feed["market"] = feed_rows(market, kind, label, report_date, period,
                                        f"reports/daily/{period}.md", "市场行为")
             feed["risk"] = feed_rows(risks, kind, label, report_date, period,
                                      f"reports/daily/{period}.md", "验证与风险")
+        elif kind == "daily":
+            feed["daily"] = feed_rows(summary_points, kind, label, report_date, period,
+                                      f"latest/{kind}.md", "核心结论")
+        else:
+            feed[kind] = feed_rows(summary_points, kind, label, report_date, period,
+                                   f"latest/{kind}.md", "核心结论")
     market_health = read_json(ROOT / "data" / "market" / "health.json")
     news_health = read_json(ROOT / "data" / "news" / "health.json")
     sponsor = manifest.get("sponsorship", {})
