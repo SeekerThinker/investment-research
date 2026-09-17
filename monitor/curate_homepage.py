@@ -1,9 +1,9 @@
 #!/usr/bin/env python3
-"""Enforce a source-backed, deliberately curated one-screen daily feed.
+"""Curate only the latest DAILY news; preserve weekly and monthly homepage research.
 
-Run after build_public_site.py and include_intraday_site.py. The selection is made
-in latest/daily.md by the researcher, not by a ranking algorithm or first-N cut.
-Full immutable reports and latest summaries remain available under Reports.
+Run after build_public_site.py and include_intraday_site.py. The 12-item limit
+applies exclusively to the researcher-selected daily summary. Other reports
+remain independently presented and all dated originals remain free to read.
 """
 from __future__ import annotations
 
@@ -51,15 +51,22 @@ def curate(out: Path) -> None:
     data["feed"]["daily"] = base.feed_rows(selected, "daily", daily["label"],
                                             daily["period"], period, source,
                                             "精选投资主题")
-    # These detailed sections and dated weekly/monthly analyses remain accessible
-    # through Reports, rather than being counted again as today's homepage news.
-    for channel in ("market", "risk", "weekly", "monthly"):
+    # Market behaviour and risks belong to the daily full text rather than
+    # being counted a second time as separate daily news on the homepage.
+    for channel in ("market", "risk"):
         data["feed"][channel] = []
+    # Crucially, do NOT touch feed['weekly'] or feed['monthly']: the daily
+    # editorial cap never applies to either independent report type.
+    for kind in ("weekly", "monthly"):
+        summary = next((x for x in data["latest"] if x["type"] == kind), None)
+        if summary and not data["feed"].get(kind):
+            raise ValueError(f"{kind} latest report exists but its homepage briefs vanished")
     data["editorial"] = {"selection": "researcher-curated-latest-summary", "max_daily": MAX_ITEMS,
                          "daily_count": len(selected), "facets": sorted(facets),
+                         "weekly_monthly_independent": True,
                          "details_in_free_reports": True}
     index.write_text(json.dumps(data, ensure_ascii=False, indent=2) + "\n", encoding="utf-8")
-    print(f"PASS curated homepage: {len(selected)} real investment themes across {len(facets)} facets; full archive preserved")
+    print(f"PASS curated daily: {len(selected)} themes / {len(facets)} facets; weekly {len(data['feed']['weekly'])}, monthly {len(data['feed']['monthly'])}; full archive preserved")
 
 
 if __name__ == "__main__":
