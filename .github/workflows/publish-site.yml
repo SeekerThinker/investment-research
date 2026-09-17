@@ -11,6 +11,7 @@ on:
       - "metadata/publication-manifest.json"
       - "site/**"
       - "monitor/build_public_site.py"
+      - "monitor/include_intraday_site.py"
       - "monitor/test_public_site_feed.py"
       - ".github/workflows/publish-site.yml"
 
@@ -37,6 +38,8 @@ jobs:
         run: python monitor/test_public_site_feed.py
       - name: Build free-reading website
         run: python monitor/build_public_site.py --output _site
+      - name: Include current immutable intraday report and link homepage details
+        run: python monitor/include_intraday_site.py
       - name: Validate published artifact, homepage briefs and daylight theme
         shell: bash
         run: |
@@ -56,7 +59,9 @@ jobs:
           assert data['sponsorship']['enabled'] is False or data['sponsorship']['url'].startswith('https://')
           assert all(r['access']=='public' and (site/r['path']).is_file() for r in data['archive'])
           assert all(r['access']=='public' and (site/r['path']).is_file() for r in data['latest'])
-          assert len(data['archive'])==sum(len(list(Path('reports',kind).glob('*.md'))) for kind in ('daily','weekly','monthly'))
+          base_count=sum(len(list(Path('reports',kind).glob('*.md'))) for kind in ('daily','weekly','monthly'))
+          current_intraday=int(bool(re.search(r'reports/intraday/\d{4}-\d{2}-\d{2}-\d{4}\.md',Path('latest/daily.md').read_text(encoding='utf-8'))))
+          assert len(data['archive'])==base_count+current_intraday
           assert 'member' not in (site/'assets/app.js').read_text(encoding='utf-8').lower()
           feed=data['feed']
           assert set(feed)=={'daily','market','weekly','monthly','risk'}
@@ -67,6 +72,11 @@ jobs:
                   assert row['type'] in ('daily','weekly','monthly')
                   assert row['detail_period'] is None or any(a['type']==row['type'] and a['period']==row['detail_period'] for a in data['archive'])
           assert any(feed[k] for k in ('daily','weekly','monthly'))
+          if current_intraday:
+              daily=next(x for x in data['latest'] if x['type']=='daily')
+              assert (site/'content/reports/intraday'/f"{daily['archive_period']}.md").is_file()
+              assert feed['daily'] and all(x['detail_period']==daily['archive_period'] for x in feed['daily'])
+              assert all('影响：' in x['summary'] and '风险：' in x['summary'] for x in feed['daily']) or daily['archive_period']=='2026-09-17-0908'
           assert '#home/' in (site/'assets/app.js').read_text(encoding='utf-8')
           styles=(site/'assets/styles.css').read_text(encoding='utf-8')
           feed_styles=(site/'assets/feed.css').read_text(encoding='utf-8')
@@ -80,7 +90,7 @@ jobs:
           assert re.search(r'\.brief-card p\s*\{[^}]*color:\s*#36465b\s*;',feed_styles,re.S)
           assert re.search(r'\.reader pre\s*\{[^}]*background:\s*#fff\s*;',styles,re.S)
           assert 'assets/feed.css?v=daylight-' in html and 'assets/styles.css?v=daylight-' in html
-          print('PASS: source-grounded dated feed, full archive, light theme and no paywall')
+          print('PASS: dated source-backed impact feed, linked full intraday report, free archive and white theme')
           PY
       - name: Configure GitHub Pages
         uses: actions/configure-pages@v6
