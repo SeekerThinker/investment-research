@@ -2,6 +2,18 @@
 
 本日志只记录**确实完成的工作**；所有者思想、编辑者操作化建议、Git 提交、自动任务和网站部署分开核对。思想文本版本不是市场事实版本；旧研报绝不因理念更新而回写。
 
+## 2026-09-17｜v0.3 投资机遇／风险规避双主线（IDEA-20260917-11，P10）
+
+- **所有者意旨（非逐字引语）**：不再每条资讯都机械重复一组“机会＋风险”；在投资机遇和风险规避两类之下集中讨论可能有重大预期差、潜在高收益或重大损失的事项。前一要求仍适用：全市场广扫描、日报精选至多12条、周报月报独立、白底单列和分析分行。
+- **编辑者证据边界**：两类是研究关注方向而非已确认的证券收益/亏损结论。要证实或量化重大预期差，需可比市场预期、同日真实价格、财报/现金流与审慎估值区间；否则写“潜在／待验证”。反向事实仍在本期免费全文及验证条件保留，不能因归类过滤。
+- **思想入库（已完成）**：[`ideas.md`](ideas.md) 新增 IDEA-11 并链接[`idea-20260917-11.md`](idea-20260917-11.md)独立原意/编辑者解释记录；[`core-beliefs.md`](core-beliefs.md) 从v0.2升到v0.3并新增P10；[`README.md`](README.md)、[`integration-map.md`](integration-map.md)及[`../metadata/philosophy-integration.md`](../metadata/philosophy-integration.md)同步更新。IDEA-04保留原记录，其**展示形式**由IDEA-11后续修订。
+- **专业规范（已完成）**：[`../metadata/news-investment-impact-policy.md`](../metadata/news-investment-impact-policy.md)、[`../metadata/daily-coverage-policy.md`](../metadata/daily-coverage-policy.md)废除每条新闻强制对称双字段；明确两类不同的成立条件/风险触发字段、真实日期与来源、传导及预期差证据门槛。[相关规范提交](https://github.com/SeekerThinker/investment-research/commit/390492d866badd1365eca20071fb951fc74708ec)。
+- **摘要和站点（已完成）**：仅将可变 `latest/daily.md` 整理为投资机遇4项、风险规避6项、七个面向。`monitor/curate_homepage.py` 校验研究者显式标签、两类差异化字段、日报≤12及周月存在性；`site/assets/two-focus.js`、`site/index.html` 负责白底单列、分析独立行、两个日报板块及周/月独立栏目。原 `reports/intraday/2026-09-17-0953.md` 22条全文与早报完全保留，历史归档和详情免费。 [双板块展示提交](https://github.com/SeekerThinker/investment-research/commit/5a7bb71d09d3f32afea94e248996e53ccf9f7bb9)。
+- **自动任务（更新回执均 SUCCESS）**：日报 `6aaa04cee1548191898c93ee3ccc2f0e`、周报 `6aaa04d985a481918cc3115219063054`、月报 `6aaa04e3e97c8191b53f52f6fb59f477` 均从思想库和新规范读取两条主线，检查预期差的可靠性并保留周/月独立研究；原 Asia/Shanghai 日报07:00、周一02:00、月首01:00不变。
+- **测试与问题（已如实处理）**：新增`monitor/test_two_focus.py`和 Pages 检查，确保非自动猜测分类、不截断13条、两类互斥字段、原文存在、周/月保留与白色主题。首次运行[35184969738](https://github.com/SeekerThinker/investment-research/actions/runs/35184969738)因**测试样例默认空字符串误删所有字段**失败，非研报事实错误；修复提交[`3393de3`](https://github.com/SeekerThinker/investment-research/commit/3393de3270a87d61f1b082d9ab075a7833b9508a)。之后[Pages运行35185056449](https://github.com/SeekerThinker/investment-research/actions/runs/35185056449) 的源摘录测试、双主线测试、精选、完整归档/周月及白底检查、build与deploy均实际 SUCCESS。随后思想日志和验证脚本的提交须以各自新运行再验，不能用旧成功代替。
+- **无需修改（理由）**：`data/market/`、`data/news/`、`index/`、`tracking/` 未添新事实；不可变 `reports/` 不改；公开免费、自愿赞助不变。`research-constitution.md`及长期估值方法的事实、证伪/资本损失原则仍适用，无须平行造新版本。
+- **未解决的研究问题**：当前没有足够市场预期、同日股价和FCF模型把本次10条判定为“已确认重大预期差”，更没有被验证的高收益股票名单。思想意旨稿仍未获所有者逐字审定；结构测试不能证明未来每条研究判断正确。
+
 ## 2026-09-17｜v0.2 范围澄清：日报精简，不删除周报/月报（IDEA-20260917-10）
 
 - **所有者澄清**：此前“5—7个面向、7—10条、最多12条”的限制只针对首页中的日报资讯，不应删除或隐藏周报与月报；每条资讯里的事实、影响、机会、风险、强度/期限、已定价/验证应分成独立视觉行，而不是挤在一个长段落。
