@@ -13,7 +13,7 @@ def entry(group: str, n: int, *, omit: str = "") -> str:
     fields = ["事实：假设事件与日期（S）。", "传导：假设盈利或债务发生变化（I）。",
               "潜在预期差：现价和市场预期未核验。", field,
               "强度/期限：待量化。", "验证：查公司公告。"]
-    fields = [f for f in fields if not f.startswith(omit)]
+    fields = [f for f in fields if not omit or not f.startswith(omit)]
     return f"{n}. **【{group}·测试面向】纯假设{n}。** " + "｜".join(fields)
 
 
