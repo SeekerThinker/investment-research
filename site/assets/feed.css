@@ -50,6 +50,26 @@
 .brief-tag { color: var(--accent2); font-weight: 750; }
 .brief-card h3 { font-size: 1.16rem; line-height: 1.46; margin: 8px 0 5px; letter-spacing: -.012em; color: var(--text); }
 .brief-card p { color: #36465b; font-size: .95rem; line-height: 1.7; margin: 0 0 8px; white-space: normal; overflow-wrap: anywhere; }
+/* Each distinct investment judgment has its own readable line, never a dark box. */
+.analysis-lines { display: grid; gap: 0; width: 100%; margin: 3px 0 10px; background: #fff; }
+.analysis-line {
+  display: grid;
+  grid-template-columns: 92px minmax(0, 1fr);
+  align-items: baseline;
+  gap: 9px 13px;
+  padding: 7px 0;
+  border-bottom: 1px solid var(--line);
+  background: #fff;
+  color: #36465b;
+  font-size: .95rem;
+  line-height: 1.75;
+}
+.analysis-line:last-child { border-bottom: 0; }
+.analysis-label { font-weight: 750; color: #234b74; white-space: nowrap; }
+.analysis-copy { min-width: 0; overflow-wrap: anywhere; color: #36465b; }
+.analysis-copy a { overflow-wrap: anywhere; }
+.reader .impact-report-item { padding-top: 8px; padding-bottom: 8px; }
+.reader .impact-report-item .analysis-lines { margin: 0; }
 .read-more { align-self: flex-start; margin-top: 0; font-size: .91rem; font-weight: 750; color: var(--accent); text-decoration: none; padding: 4px 0; }
 .read-more:hover, .read-more:focus-visible { text-decoration: underline; }
 .end-links { display: flex; gap: 22px; justify-content: space-between; align-items: center; border: 1px solid var(--line); border-radius: 14px; padding: 22px; background: #fff; }
@@ -61,5 +81,6 @@
   .brief-section { padding-top: 22px; scroll-margin-top: 125px; }
   .brief-heading { align-items: start; flex-direction: column; }
   .brief-card { padding: 15px 16px; }
+  .analysis-line { grid-template-columns: 78px minmax(0, 1fr); gap: 8px; font-size: .91rem; }
   .end-links { align-items: flex-start; flex-direction: column; }
 }
