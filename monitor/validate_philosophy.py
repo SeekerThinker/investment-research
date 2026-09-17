@@ -1,9 +1,5 @@
 #!/usr/bin/env python3
-"""Dependency sanity checks for the evolving philosophy library; stdlib only.
-
-This checks structural integrity, not the truth of any investment thesis or whether
-an assistant semantically propagated every newly discussed idea.
-"""
+"""Structural checks for the evolving philosophy library; not investment verification."""
 from __future__ import annotations
 
 import re
@@ -14,7 +10,8 @@ ROOT = Path(__file__).resolve().parents[1]
 LIBRARY = ROOT / "philosophy"
 LIBRARY_FILES = (
     "README.md", "core-beliefs.md", "research-constitution.md",
-    "intake-and-propagation.md", "ideas.md", "integration-map.md", "change-log.md",
+    "intake-and-propagation.md", "ideas.md", "idea-20260917-11.md",
+    "integration-map.md", "change-log.md",
 )
 METHODS = (
     "research-os.md", "daily-coverage-policy.md", "news-investment-impact-policy.md",
@@ -54,24 +51,26 @@ def main() -> None:
     integration = (ROOT / "metadata" / "philosophy-integration.md").read_text(encoding="utf-8")
     changelog = (LIBRARY / "change-log.md").read_text(encoding="utf-8")
     mapping = (LIBRARY / "integration-map.md").read_text(encoding="utf-8")
-    for i in range(1, 9):
+    policy = (ROOT / "metadata" / "news-investment-impact-policy.md").read_text(encoding="utf-8")
+    for i in range(1, 11):
         require(re.search(rf"\bP{i:02d}\b", beliefs) is not None, f"P{i:02d} missing from beliefs")
-    for i in range(1, 8):
-        require(f"IDEA-20260917-{i:02d}" in ideas, f"initial IDEA {i} missing")
+    for i in range(1, 12):
+        require(f"IDEA-20260917-{i:02d}" in ideas, f"IDEA {i} missing from register")
+    require("idea-20260917-11.md" in ideas, "IDEA-11 audit record not linked")
     require("philosophy/README.md" in readme, "root README does not introduce philosophy")
     require("待逐字审核" in ideas or "尚未逐字" in beliefs, "owner/editor provenance is unclear")
-    require("v0.1" in changelog and "v0.1" in integration, "version baseline missing")
-    for marker in ("日报", "周报", "月报", "网站", "估值", "无须修改"):
-        # Wording varies between '无须' and '无需'; accept either for the latter.
-        if marker == "无须修改":
-            require("无需修改" in mapping or "无须修改" in mapping, "missing no-change audit")
-        else:
-            require(marker in mapping, f"dependency map missing layer: {marker}")
+    require("v0.1" in changelog and "v0.3" in changelog and "v0.3" in integration,
+            "current philosophy version and baseline missing")
+    require("投资机遇" in policy and "风险规避" in policy and "预期差" in policy,
+            "impact policy has not adopted two-focus evidence checks")
+    for marker in ("日报", "周报", "月报", "网站", "估值", "无需修改"):
+        require(marker in mapping or (marker == "无需修改" and "无须修改" in mapping),
+                f"dependency map missing layer: {marker}")
     files = [LIBRARY / f for f in LIBRARY_FILES] + [ROOT / "metadata" / "philosophy-integration.md"]
     nlinks = sum(check_relative_links(path) for path in files)
     require(nlinks >= 15, f"unexpectedly few cross-document links ({nlinks})")
-    print(f"PASS philosophy integrity: {len(files)} docs, 8 core beliefs, 7 owner-related ideas, {nlinks} local links")
-    print("NOTE: manual semantic review and automation receipts remain required for each philosophy change")
+    print(f"PASS philosophy integrity: {len(files)} docs, 10 core beliefs, 11 ideas, {nlinks} local links")
+    print("NOTE: structural tests cannot validate investment theses, expectation gaps or automation semantics")
 
 
 if __name__ == "__main__":
