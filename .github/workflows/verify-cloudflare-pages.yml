@@ -1,0 +1,37 @@
+name: Verify Cloudflare Pages Build
+
+on:
+  workflow_dispatch:
+  push:
+    branches: [main]
+    paths:
+      - "monitor/**"
+      - "site/**"
+      - "latest/**"
+      - "reports/**"
+      - "philosophy/**"
+      - "metadata/**"
+      - "docs/cloudflare-pages.md"
+      - ".github/workflows/verify-cloudflare-pages.yml"
+
+permissions:
+  contents: read
+
+jobs:
+  cloudflare-build-parity:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout canonical public GitHub repository
+        uses: actions/checkout@v7
+      - name: Use Python matching the existing GitHub Pages build
+        uses: actions/setup-python@v7
+        with:
+          python-version: "3.12"
+      - name: Build exactly what Cloudflare Pages will publish
+        run: bash monitor/build_cloudflare_pages.sh
+      - name: Validate published JavaScript syntax
+        run: |
+          node --check _site/assets/app.js
+          node --check _site/assets/two-focus.js
+      - name: Report deploy boundary
+        run: echo "PASS static artifact parity; Cloudflare Pages account login, GitHub integration and first deployment are separate user-authorized steps."
