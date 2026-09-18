@@ -14,7 +14,7 @@
 | 最新 revision、写前校验与写后失效 | 已有每次写前确认 PUBLIC/push、读取 blob SHA 和不可变历史原则 | **保留并显式写入 AGENTS**；不另建 HARC manifest/YAML 并维护两份目录。若 SHA 改变重新读取，不覆盖并发更新。 |
 | 框架批准与最终成果批准 | 本项目持续自动发布有日期的财经资讯，并非 HARC 的双语方法论论文；现行授权支持既定日／周／月例行发布 | **不移植逐篇人工双门槛**，避免阻断已授权自动任务；改变投资思想实质、付费模式、项目所有权、季度年度新发布制度等才另求明确决定；不宣称已批准的理念稿或证券判断。 |
 | 双语 canonical/mirror、正式论文论证图及全套模板 | 本项目中文阅读为主，已建证据/模型/研究阶段结构，没有用户要求维护全量英文镜像或 HARC 论文体系 | **暂不采纳**；不引入 `HARC_MANIFEST.yaml`、`FORM_CORE`、论文批准快照或中英双份文件。若未来用户明确决定再评估成本和许可证。 |
-| 校验与自测 | 现有哲学结构、研究选摘、网页与 Pages 构建 CI 能验证部分机械一致性，但不能验证预期差真实性 | **保留现有 CI**；新增入口、状态和协作约定必须有有效相互链接，人工在跨任务交接时审查状态是否过时。未来可以独立添加自动入口链接/状态检查，但在有真实测试运行前不能声称该项已自动覆盖。 |
+| 校验与自测 | 原有哲学结构、网站与 Pages CI 只能做机械检查，不能判断预期差真实性 | **已新增** [`../monitor/validate_collaboration.py`](../monitor/validate_collaboration.py)，并让 [philosophy-integrity workflow](https://github.com/SeekerThinker/investment-research/blob/main/.github/workflows/philosophy-integrity.yml) 在入口/状态文件变动时验证链接、关键状态和来源边界。[首次完整 CI SUCCESS](https://github.com/SeekerThinker/investment-research/actions/runs/35362570543)；它不检验 Cloudflare 登录、市场事实或人工授权。 |
 | 版权与发布责任 | 公开仓库与免费静态网站已有 [`../metadata/publication-policy.md`](../metadata/publication-policy.md)；既有发布规范要求来源/隐私审查 | **延续现有边界**：公开可见不等于第三方内容可复制，生成网页不含某文件也不代表公开 Git 历史中不可见；HARC 来源只引用不搬运。 |
 
 ## 明确不修改的区域与理由
@@ -26,5 +26,5 @@
 ## 验收方法与未完项
 
 - **文档验收**：从 `START_HERE.md` 能导航到 `AGENTS.md`、`docs/project-state.md`、思想库和发布规则；状态页可区分已经核实／上次核实／未知／待人类确认。
-- **运行验收**：未来每次高影响写入仍必须验证仓库身份及目标文件 revision，CI 与真实部署分别核对；结构检查通过不等于投资结论正确。任何新生成的年度/季度、Cloudflare 地址或 HARC 全套批准状态都不可凭本页声称存在。
+- **运行验收**：本次 [GitHub Actions 校验运行](https://github.com/SeekerThinker/investment-research/actions/runs/35362570543) 中原哲学检查及新增交接检查均 SUCCESS；不表示投资命题/Cloudflare 部署真实通过。未来高影响写入仍须核对仓库身份、revision、真实网站状态。
 - **待后续决定**：季度／年度研究具体实施、Cloudflare 正式网址、是否引入独立人类审核门以及许可方案均应在得到真实指示/回执后更新 [`project-state.md`](project-state.md)；无需因本次审查反复追问用户或虚构确认。
