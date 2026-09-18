@@ -1,5 +1,6 @@
 #!/usr/bin/env python3
 """Offline regression: daily focus categories come from editor, not inferred news."""
+import re
 import unittest
 from pathlib import Path
 
@@ -42,14 +43,19 @@ class TwoFocusTests(unittest.TestCase):
         with self.assertRaisesRegex(ValueError, "1-12"):
             focus.curated_items(raw)
 
-    def test_actual_latest_is_explicitly_curated_and_archive_untouched(self):
+    def test_actual_latest_is_explicitly_curated_and_references_real_archive(self):
         raw = (HERE / "latest" / "daily.md").read_text(encoding="utf-8")
         found, facets = focus.curated_items(raw)
         self.assertLessEqual(len(found), 12)
         self.assertLessEqual(len(facets), 7)
         self.assertTrue(all(x[0] in ("投资机遇", "风险规避") for x in found))
-        self.assertIn("reports/intraday/2026-09-17-0953.md", raw)
-        self.assertTrue((HERE / "reports" / "intraday" / "2026-09-17-0953.md").is_file())
+        # Accept either today's canonical daily or a genuinely published intraday
+        # update. A changing current date must never make this test stale.
+        refs = re.findall(r"reports/(daily|intraday)/(\d{4}-\d{2}-\d{2}(?:-\d{4})?)\.md", raw)
+        self.assertTrue(refs, 'latest daily must link to an immutable full report')
+        for kind, period in refs:
+            self.assertTrue((HERE / 'reports' / kind / f'{period}.md').is_file(),
+                            f'latest references an absent {kind} report: {period}')
 
 
 if __name__ == "__main__":
