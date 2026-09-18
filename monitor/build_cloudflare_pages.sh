@@ -6,6 +6,7 @@ set -euo pipefail
 cd "$(dirname "$0")/.."
 
 python3 monitor/validate_philosophy.py
+python3 monitor/validate_collaboration.py
 python3 monitor/test_public_site_feed.py
 python3 monitor/test_two_focus.py
 python3 monitor/build_public_site.py --output _site
@@ -34,5 +35,5 @@ for report in data['latest'] + data['archive']:
     assert report['access'] == 'public' and (root / report['path']).is_file(), f'broken report: {report}'
 for private_path in ('tracking', 'index', 'data/news/state.json', 'data/news/candidates'):
     assert not (root / private_path).exists(), f'nonpublic working data copied to site: {private_path}'
-print('PASS Cloudflare Pages build: curated two-focus daily, independent weekly/monthly, free archives, no private working data')
+print('PASS Cloudflare Pages build: collaboration handoff, curated two-focus daily, independent weekly/monthly, free archives, no private working data')
 PY
