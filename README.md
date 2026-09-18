@@ -1,8 +1,14 @@
-# Investment Research
+# Market Perspectives · 市场经纬
 
-Public, auditable A-share and Hong Kong Stock Connect research project. All published reports are free to read; voluntary sponsorship does not change access or research conclusions.
+跨周期财经监测与投资研究。公开、可追溯的 A 股及港股通研究项目；所有已发布报告免费阅读，自愿赞助不影响研究结论或访问权。
 
-Website: https://seekerthinker.github.io/investment-research/ (free report archive and voluntary support; payment link not yet enabled).
+**目前可用网站：** https://seekerthinker.github.io/investment-research/ 。Cloudflare Pages 的候选项目名为 `market-perspectives`，真实生产网址须以 Cloudflare 后台及页面核验结果为准，不能将候选网址视为已经上线。GitHub 仓库仍叫 `SeekerThinker/investment-research`。
+
+## 从这里接手项目 · Start here
+
+**新协作者／新 AI／跨对话继续工作：先打开 [`START_HERE.md`](START_HERE.md)，再读 [`AGENTS.md`](AGENTS.md) 与 [`docs/project-state.md`](docs/project-state.md)。** 这三份文件分别解释读取顺序、权限和证据边界、目前阻碍与下一步；它们不代替最新报告或平台的真实状态。本项目对外部 HARC 协作协议的选择性评估见 [`docs/collaboration-review.md`](docs/collaboration-review.md)。
+
+网站托管配置见 [`docs/cloudflare-pages.md`](docs/cloudflare-pages.md)；Cloudflare 的实际创建、部署成功和分配网址须独立确认，不能凭 GitHub 构建检查推断。当前报告目录为日／盘中／周／月；季度与年度独立发布尚未建立，不能将规划写成已上线。
 
 ## Investment philosophy · 可持续演进的投资思想库
 
@@ -66,6 +72,7 @@ The automated market-data adapter is a research convenience layer and is not exc
 - Operational health: `data/news/health.json`
 - Research OS validator: `monitor/validate_research_os.py`
 - Philosophy/link integrity validator: `monitor/validate_philosophy.py`
+- Collaboration/handoff validator: `monitor/validate_collaboration.py`
 
 NEWS candidates are discovery inputs only. Daily and weekly research must verify material candidates against primary/independent sources before promoting them into structured research.
 
