@@ -8,6 +8,11 @@ on:
       - "philosophy/**"
       - "metadata/philosophy-integration.md"
       - "monitor/validate_philosophy.py"
+      - "monitor/validate_collaboration.py"
+      - "START_HERE.md"
+      - "AGENTS.md"
+      - "docs/project-state.md"
+      - "docs/collaboration-review.md"
       - "README.md"
       - "site/index.html"
       - ".github/workflows/philosophy-integrity.yml"
@@ -16,6 +21,11 @@ on:
       - "philosophy/**"
       - "metadata/philosophy-integration.md"
       - "monitor/validate_philosophy.py"
+      - "monitor/validate_collaboration.py"
+      - "START_HERE.md"
+      - "AGENTS.md"
+      - "docs/project-state.md"
+      - "docs/collaboration-review.md"
       - "README.md"
       - "site/index.html"
       - ".github/workflows/philosophy-integrity.yml"
@@ -35,3 +45,5 @@ jobs:
           python-version: "3.12"
       - name: Verify philosophy library, idea IDs and cross-document links
         run: python monitor/validate_philosophy.py
+      - name: Verify repository handoff links and explicit authority boundaries
+        run: python monitor/validate_collaboration.py
