@@ -1,6 +1,6 @@
-# Cloudflare Pages 免费托管接入说明
+# Market Perspectives · Cloudflare Pages 免费托管接入说明
 
-**状态：仓库构建入口已准备；Cloudflare 账户尚未授权、Pages 项目尚未创建，不能把示例地址当成已上线站点。** GitHub 仓库 `SeekerThinker/investment-research` 继续是代码、思想库与历史研报的唯一资料来源。GitHub Pages 保留为可用的旧站及回退渠道，直到新的 Cloudflare 网址真实部署并核验成功；不复制、重写历史报告或开通付费阅读。
+**站点品牌已确定：Market Perspectives（市场经纬）；副标题：跨周期财经监测与投资研究。** Cloudflare Pages 首选项目名 `market-perspectives`，目标网址 `market-perspectives.pages.dev` **尚未检查是否可用，也未创建或部署**。状态：仓库构建入口已准备；Cloudflare 账户尚未授权、Pages 项目尚未创建，不能把目标地址当成已上线站点。GitHub 仓库 `SeekerThinker/investment-research` 继续是代码、思想库与历史研报的唯一资料来源；仓库名称不因网站品牌改变。GitHub Pages 保留为可用旧站及回退渠道，直到 Cloudflare 网址真实部署并核验成功；不复制、重写历史报告或开通付费阅读。
 
 ## Cloudflare 控制台需要完成的首次授权
 
@@ -9,7 +9,7 @@
 | Cloudflare Pages 配置 | 项目实际填写值 |
 | --- | --- |
 | Git provider / repository | GitHub / `SeekerThinker/investment-research` |
-| Project name | 首选 `investment-research`，占用则选择另一个简短、不包含账户名的可用项目名 |
+| Project name | 首选 `market-perspectives`；只有在 Cloudflare 确认占用时才另选名称，且不包含账户名 |
 | Production branch | `main` |
 | Framework preset | `None` / 无框架 |
 | Root directory | 仓库根目录（留空或 `/`，不要填 `site`） |
@@ -22,8 +22,8 @@
 
 ## 首次发布验收与回退
 
-1. 在 Cloudflare 控制台确认生产部署状态为 **Success**，以平台实际分配的 `*.pages.dev` 地址为准；示例 `investment-research.pages.dev` **未核实可用性，不可先对外宣传**。
-2. 访问新网站根路径，应有“投资机遇 / 风险规避 / 周报观察 / 月度视角”四个首页板块；打开日报详情、周报全文、月报全文、历史报告和投资思想库导航，确认正文与免费可读状态。打开 `content/index.json` 检查 `editorial.focus_counts` 之和与日报条目数一致，日报不超过12条。
+1. 在 Cloudflare 控制台确认生产部署状态为 **Success**，以平台实际分配的 `*.pages.dev` 地址为准；目标 `market-perspectives.pages.dev` **未核实可用性，不可先对外宣传**。
+2. 访问新网站根路径，核对站点品牌 Market Perspectives 和“投资机遇 / 风险规避 / 周报观察 / 月度视角”四个首页板块；打开日报详情、周报全文、月报全文、历史报告和投资思想库导航，确认正文与免费可读状态。打开 `content/index.json` 检查 `editorial.focus_counts` 之和与日报条目数一致，日报不超过12条。
 3. 对照同时期旧 GitHub Pages 的报告版本、日期和详情链接；确保新站没有误用过时、预览分支或半成品报告。完成以后再决定是否将项目正式对外链接指向 Cloudflare；现有 GitHub Pages 可以继续提供备用入口。
 4. 遇到 Cloudflare 构建失败、资源404、遗漏周报/月报、缓存过旧或错误公开内部文件，**先不切换正式网址**。查看 Cloudflare 构建日志和 GitHub 的独立 Cloudflare build-check 工作流，修复并再次验证；旧站保持不变。
 
