@@ -1,6 +1,6 @@
 # Market Perspectives｜当前项目状态与交接点
 
-> 这是**可更新的操作状态**，不是第二套投资思想、实时行情数据库或已批准投资结论。项目思想入口在 2026-09-19（北京时间）核对并更新；Cloudflare 登录、市场行情和自动任务运行仍只沿用各自明确注明的上次核验状态，须重新查询，不得由本页推断。发生重要变化后由执行者更新本页并给出可验证回执。
+> 这是**可更新的操作状态**，不是第二套投资思想、实时行情数据库或已批准投资结论。项目思想入口在 2026-09-19（北京时间）核对并更新；2026-09-20 对用户提供的投研文件完成选择性方法整合。Cloudflare 登录、市场行情和自动任务运行仍只沿用各自明确注明的上次核验状态，须重新查询，不得由本页推断。发生重要变化后由执行者更新本页并给出可验证回执。
 
 ## 当前目标（CURRENT OBJECTIVE）
 
@@ -17,6 +17,7 @@
 
 - 日／周／月流程的规范分别从 [`../philosophy/README.md`](../philosophy/README.md) 和 [`../metadata/philosophy-integration.md`](../metadata/philosophy-integration.md) 定位；最新报告与日期按 `latest/` 和 `reports/` 实际内容逐次读取，本页**不复制**报告数字、最新行情、任务回执或股票观点。
 - **2026-09-19 思想入口更新**：所有者提出的 AI 长期发展基础判断已在 [`../philosophy/core-beliefs.md`](../philosophy/core-beliefs.md) P11 和 [`../philosophy/idea-20260919-01.md`](../philosophy/idea-20260919-01.md) 收录；当前思想库为 **v0.4 意旨提炼草案**，完整传播与研究证据边界见 [`../philosophy/change-log.md`](../philosophy/change-log.md) 和执行桥接规范。本页不重复其内容，不把预期当作市场已核验事实，也不代表所有者已逐字审定全部提炼稿。
+- **2026-09-20 用户投研资料方法融合**：新增 [`../metadata/multi-horizon-capex-method.md`](../metadata/multi-horizon-capex-method.md) 用于确有上游资本开支传导的专题；逐份采纳/未采纳及历史价格风险见 [`research-material-review-20260920.md`](research-material-review-20260920.md)。执行桥接和 [`../AGENTS.md`](../AGENTS.md) 已加入入口。**没有验证附件的个股价格、目标市值、利润预测或仓位；没有将这些历史数字、排行或全文写入当前研究数据与公开报告；这不是新增 P12，也不是新的定时任务。**
 - 2026-09-18 核验的 `reports/` 下有 `daily/`、`intraday/`、`weekly/`、`monthly/`；**季度／年度研究已是用户明确提出的时间尺度愿景，但仓库目前未建立对应独立报告目录、完整发布链与经确认的运行周期**。建立新目录、发布规则、首页模块或定时任务须先提出具体设计，不能倒填历史季度／年度报告或假装已经自动运行。
 
 ## 待确认（PENDING HUMAN DECISIONS）
